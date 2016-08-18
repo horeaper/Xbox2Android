@@ -124,7 +124,7 @@ namespace XboxInputMapper
 		private void timer_Tick(object sender, EventArgs e)
 		{
 			XInput.State state;
-			if (XInput.GetState(0, out state) == XInput.ErrorSuccess) {
+			if (XInput.GetState(0, out state) == XInput.ErrorSuccess && m_inputDevicePath != null) {
 				//Axis
 				if (Settings.AxisCenter.HasValue && Settings.AxisRadius > 0) {
 					var direction = new Vector(state.Gamepad.ThumbLX, state.Gamepad.ThumbLY);
@@ -317,6 +317,8 @@ namespace XboxInputMapper
 				}
 
 				m_previousGamepad = gamepad;
+
+				SendTouchData();
 			}
 			else {
 				m_previousGamepad = new XInput.Gamepad();
@@ -324,8 +326,6 @@ namespace XboxInputMapper
 				m_isLeftTriggerDown = false;
 				m_isRightTriggerDown = false;
 			}
-
-			SendTouchData();
 		}
 	}
 }
