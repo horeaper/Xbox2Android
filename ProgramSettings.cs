@@ -11,17 +11,17 @@ namespace XboxInputMapper
 	{
 		public bool IsMinimized = false;
 
-		public string ApplicationTitle = "BlueStacks App Player";
-		public bool IsVisualizeTouch = true;
-		public bool IsTriggerHappy = false;
+		public string AdbPath = "";
+		public string LastSelectedDevice;
 
-		public string BackgroundImage;
+		public bool IsTriggerHappy = false;
+		public bool IsReverseAxis = false;
 
 		public Point? AxisCenter;
 		public int AxisRadius = 120;
 		public int ShadowAxisOffset = -8;
-		public bool IsReverseAxis = false;
 
+		public string BackgroundImage;
 		public List<Point>[] ButtonPositions = new List<Point>[Constants.ButtonCount];
 		public List<Point> LeftTriggerPositions = new List<Point>();
 		public List<Point> RightTriggerPositions = new List<Point>();
