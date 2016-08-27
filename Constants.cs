@@ -45,8 +45,5 @@ namespace XboxInputMapper
 			"X",
 			"Y"
 		};
-
-		public const string LeftTriggerName = "LT";
-		public const string RightTriggerName = "RT";
 	}
 }

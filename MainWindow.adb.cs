@@ -43,7 +43,7 @@ namespace XboxInputMapper
 			}
 		}
 
-		void BtnRefresh_OnClick(object sender, RoutedEventArgs e)
+		void btnRefresh_Click(object sender, RoutedEventArgs e)
 		{
 			ReconnectAdb();
 		}
@@ -85,7 +85,7 @@ namespace XboxInputMapper
 			}
 		}
 
-		private void ComboDevices_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void comboDevices_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			m_selectedDevice = null;
 			m_inputEventPath = null;

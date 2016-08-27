@@ -14,7 +14,7 @@ namespace XboxInputMapper
 		public string AdbPath = "";
 		public string LastSelectedDevice;
 
-		public bool IsTriggerHappy = false;
+		public int TriggerMode = 0;
 		public bool IsReverseAxis = false;
 
 		public Point? AxisCenter;
@@ -23,8 +23,6 @@ namespace XboxInputMapper
 
 		public string BackgroundImage;
 		public List<Point>[] ButtonPositions = new List<Point>[Constants.ButtonCount];
-		public List<Point> LeftTriggerPositions = new List<Point>();
-		public List<Point> RightTriggerPositions = new List<Point>();
 
 		public static ProgramSettings Load()
 		{

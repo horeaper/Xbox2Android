@@ -19,28 +19,45 @@
 					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
 				<TextBox x:Name="textAdbPath" HorizontalAlignment="Stretch" Height="23" VerticalContentAlignment="Center" />
-				<Button x:Name="btnRefresh" Grid.Column="1" Width="25" Margin="5,0,0,0" Click="BtnRefresh_OnClick">
+				<Button x:Name="btnRefresh" Grid.Column="1" Width="25" Margin="5,0,0,0" Click="btnRefresh_Click">
 					<Button.Content>
 						<Image Source="Refresh.png" />
 					</Button.Content>
 				</Button>
 			</Grid>
 			
-			<ComboBox x:Name="comboDevices" Margin="10,5,10,5" SelectionChanged="ComboDevices_SelectionChanged" />
+			<ComboBox x:Name="comboDevices" Margin="10,5,10,5" Height="23" SelectionChanged="comboDevices_SelectionChanged" />
 
-			<Grid Margin="0,5,0,5">
+			<Grid Margin="10,5,10,5">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="*" />
 				</Grid.ColumnDefinitions>
-				<TextBlock Text="Input Event" VerticalAlignment="Center" Margin="10,0,0,0" />
-				<TextBox x:Name="textInputEvent" Grid.Column="1" Height="23" VerticalContentAlignment="Center" Margin="5,0,10,0" IsReadOnly="True" />
+				<TextBlock Text="Input Event" VerticalAlignment="Center" />
+				<TextBox x:Name="textInputEvent" Grid.Column="1" Height="23" VerticalContentAlignment="Center" Margin="5,0,0,0" IsReadOnly="True" />
 			</Grid>
 
-			<CheckBox x:Name="checkTriggerHappy" HorizontalAlignment="Left" Margin="10,5,0,5" Content="Trigger Happy" Checked="CheckTriggerHappy_CheckedChanged" Unchecked="CheckTriggerHappy_CheckedChanged"/>
-			<CheckBox x:Name="checkReverseAxis" HorizontalAlignment="Left" Margin="10,5,0,5" Content="Reverse Axis" Checked="CheckReverseAxis_CheckedChanged" Unchecked="CheckReverseAxis_CheckedChanged"/>
+			<Grid Margin="10,5,10,5">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<TextBlock Text="Trigger Mode" VerticalAlignment="Center" />
+				<ComboBox x:Name="comboTriggerMode" Grid.Column="1" Margin="5,0,0,0" Height="23" SelectionChanged="comboTriggerMode_SelectionChanged">
+					<ComboBox.Items>
+						<ComboBoxItem Content="Trigger Happy A" />
+						<ComboBoxItem Content="Trigger Happy B" />
+						<ComboBoxItem Content="Double Harmony" />
+						<ComboBoxItem Content="Double Harmony Frenzy!!" />
+						<ComboBoxItem Content="Triple Triplet" />
+						<ComboBoxItem Content="Triple Triplet Triangle!!" />
+					</ComboBox.Items>
+				</ComboBox>
+			</Grid>
+			
+			<CheckBox x:Name="checkReverseAxis" HorizontalAlignment="Left" Margin="10,5,0,5" Content="Reverse Axis" Checked="checkReverseAxis_CheckedChanged" Unchecked="checkReverseAxis_CheckedChanged"/>
 		</StackPanel>
 
-		<Button Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" Width="120" Height="23" Content="Touch Profile" Click="ProfileButton_Click"/>
+		<Button Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" Width="120" Height="23" Content="Touch Profile" Click="btnTouchProfile_Click"/>
 	</Grid>
 </Window>

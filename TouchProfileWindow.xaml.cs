@@ -46,12 +46,6 @@ namespace XboxInputMapper
 					AddButtonControlToCanvas(new ButtonControl(Constants.ButtonDisplayName[index], point), m_buttonControls[index]);
 				}
 			}
-			foreach (var point in MainWindow.Settings.LeftTriggerPositions) {
-				AddButtonControlToCanvas(new ButtonControl(Constants.LeftTriggerName, point), m_leftTriggerControls);
-			}
-			foreach (var point in MainWindow.Settings.RightTriggerPositions) {
-				AddButtonControlToCanvas(new ButtonControl(Constants.RightTriggerName, point), m_rightTriggerControls);
-			}
 		}
 
 #region Functions
@@ -164,10 +158,6 @@ namespace XboxInputMapper
 				MainWindow.Settings.ButtonPositions[index].Clear();
 				MainWindow.Settings.ButtonPositions[index].AddRange(m_buttonControls[index].Select(control => control.Location));
 			}
-			MainWindow.Settings.LeftTriggerPositions.Clear();
-			MainWindow.Settings.LeftTriggerPositions.AddRange(m_leftTriggerControls.Select(control => control.Location));
-			MainWindow.Settings.RightTriggerPositions.Clear();
-			MainWindow.Settings.RightTriggerPositions.AddRange(m_rightTriggerControls.Select(control => control.Location));
 
 			Close();
 		}
