@@ -10,8 +10,8 @@ namespace XboxInputMapper
 {
 	partial class MainWindow
 	{
-		const int ThumbDeadzone = short.MaxValue / 2;
-		const int TriggerDeadzone = byte.MaxValue / 4;
+		const int ThumbDeadzone = short.MaxValue / 4;
+		const int TriggerDeadzone = byte.MaxValue / 2;
 		const int MaxTouchCount = 10;
 		XInput.Gamepad m_previousGamepad;
 		bool m_isDirectionInEffect;
