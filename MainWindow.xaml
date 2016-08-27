@@ -4,7 +4,7 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		mc:Ignorable="d"
-		Title="Xbox 2 Android" Width="275" Height="220" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" FontFamily="Segoe UI" FontSize="12" Icon="Program.ico"
+		Title="Xbox 2 Android" Width="275" Height="250" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" FontFamily="Segoe UI" FontSize="12" Icon="Program.ico"
 		Loaded="MainWindow_Loaded" Closing="MainWindow_Closing" StateChanged="MainWindow_StateChanged">
 	<Grid>
 		<Grid.RowDefinitions>
@@ -25,7 +25,17 @@
 					</Button.Content>
 				</Button>
 			</Grid>
+			
 			<ComboBox x:Name="comboDevices" Margin="10,5,10,5" SelectionChanged="ComboDevices_SelectionChanged" />
+
+			<Grid Margin="0,5,0,5">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<TextBlock Text="Input Event" VerticalAlignment="Center" Margin="10,0,0,0" />
+				<TextBox x:Name="textInputEvent" Grid.Column="1" Height="23" VerticalContentAlignment="Center" Margin="5,0,10,0" IsReadOnly="True" />
+			</Grid>
 
 			<CheckBox x:Name="checkTriggerHappy" HorizontalAlignment="Left" Margin="10,5,0,5" Content="Trigger Happy" Checked="CheckTriggerHappy_CheckedChanged" Unchecked="CheckTriggerHappy_CheckedChanged"/>
 			<CheckBox x:Name="checkReverseAxis" HorizontalAlignment="Left" Margin="10,5,0,5" Content="Reverse Axis" Checked="CheckReverseAxis_CheckedChanged" Unchecked="CheckReverseAxis_CheckedChanged"/>

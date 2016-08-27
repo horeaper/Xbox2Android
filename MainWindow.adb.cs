@@ -13,7 +13,7 @@ namespace XboxInputMapper
 	{
 		AndroidDebugBridge m_adb;
 		IDevice m_selectedDevice;
-		string m_inputDevicePath;
+		volatile string m_inputEventPath;
 
 		class ShellCommandReceiver : IShellOutputReceiver
 		{
@@ -65,7 +65,8 @@ namespace XboxInputMapper
 			}
 			comboDevices.Items.Clear();
 			m_selectedDevice = null;
-			m_inputDevicePath = null;
+			m_inputEventPath = null;
+			Dispatcher.Invoke(() => textInputEvent.Text = "");
 		}
 
 		private void adb_DeviceConnected(object sender, DeviceEventArgs e)
@@ -87,7 +88,9 @@ namespace XboxInputMapper
 		private void ComboDevices_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			m_selectedDevice = null;
-			m_inputDevicePath = null;
+			m_inputEventPath = null;
+			Dispatcher.Invoke(() => textInputEvent.Text = "");
+
 			if (comboDevices.SelectedItem != null) {
 				m_selectedDevice = (IDevice)((ComboBoxItem)comboDevices.SelectedItem).Tag;
 				ResetGamepadState();
@@ -127,7 +130,8 @@ namespace XboxInputMapper
 			if (colonIndex == -1) {
 				return;
 			}
-			m_inputDevicePath = lines[0].Substring(colonIndex + 2);
+			m_inputEventPath = lines[0].Substring(colonIndex + 1).Trim();
+			Dispatcher.Invoke(() => textInputEvent.Text = m_inputEventPath);
 		}
 
 		const int EV_ABS = 3;
