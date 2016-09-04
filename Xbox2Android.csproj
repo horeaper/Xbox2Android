@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{F6AF006F-D3B2-412B-B987-5E20A1F0F144}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Xbox2Android</RootNamespace>
     <AssemblyName>Xbox2Android</AssemblyName>
@@ -43,10 +43,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -73,9 +70,9 @@
     <Compile Include="Controls\IDisplayControl.cs" />
     <Compile Include="MainWindow.Icon.cs" />
     <Compile Include="MainWindow.Input.cs" />
-    <Compile Include="MainWindow.server.cs" />
+    <Compile Include="MainWindow.Network.cs" />
     <Compile Include="Native\XInput.cs" />
-    <Compile Include="ProgramSettings.cs" />
+    <Compile Include="Xbox2Android.cs" />
     <Compile Include="TouchProfileWindow.xaml.cs">
       <DependentUpon>TouchProfileWindow.xaml</DependentUpon>
     </Compile>

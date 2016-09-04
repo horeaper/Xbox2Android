@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using Xbox2Android.Native;
 
 namespace Xbox2Android
@@ -25,7 +26,7 @@ namespace Xbox2Android
 			XInput.State state;
 			if (XInput.GetState(0, out state) == XInput.ErrorSuccess) {
 				//Axis
-				if (Settings.AxisCenter.HasValue && Settings.AxisRadius > 0) {
+				if (ProgramSettings.AxisCenter.HasValue && ProgramSettings.AxisRadius > 0) {
 					var direction = new Vector(state.Gamepad.ThumbLX, state.Gamepad.ThumbLY);
 					if (Math.Abs(direction.X) <= ThumbDeadzone) {
 						direction.X = 0;
@@ -41,10 +42,10 @@ namespace Xbox2Android
 					}
 					else {
 						direction.Normalize();
-						direction *= Settings.AxisRadius;
+						direction *= ProgramSettings.AxisRadius;
 
 						//Reverse axis
-						if (Settings.IsReverseAxis) {
+						if (ProgramSettings.IsReverseAxis) {
 							direction.X = -direction.X;
 							direction.Y = -direction.Y;
 						}
@@ -56,9 +57,9 @@ namespace Xbox2Android
 						else if (direction.X < 0) {
 							m_isShadowAxis = true;
 						}
-						var axisCenter = Settings.AxisCenter.Value;
+						var axisCenter = ProgramSettings.AxisCenter.Value;
 						if (m_isShadowAxis) {
-							axisCenter.X += Settings.ShadowAxisOffset;
+							axisCenter.X += ProgramSettings.ShadowAxisOffset;
 						}
 
 						//Output
@@ -163,7 +164,7 @@ namespace Xbox2Android
 				}
 				for (int cnt = 0; cnt < Constants.ButtonCount; ++cnt) {
 					if (m_isButtonDown[cnt]) {
-						m_dataBuffer.AddRange(Settings.ButtonPositions[cnt]);
+						m_dataBuffer.AddRange(ProgramSettings.ButtonPositions[cnt]);
 					}
 				}
 
@@ -195,7 +196,8 @@ namespace Xbox2Android
 					}
 				}
 
-// 				m_selectedDevice.ExecuteShellCommand(m_sendString.ToString(), new ShellCommandReceiver());
+				var selectedItem = (ComboBoxItem)comboDevices.SelectedItem;
+				SendString((ClientParam)selectedItem.Tag, m_sendString.ToString());
 				m_isDataDirty = false;
 			}
 		}

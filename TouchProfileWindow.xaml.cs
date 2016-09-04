@@ -33,16 +33,16 @@ namespace Xbox2Android
 				m_buttonControls[index] = new List<ButtonControl>();
 			}
 
-			if (!string.IsNullOrEmpty(MainWindow.Settings.BackgroundImage)) {
-				m_backgroundImage = MainWindow.Settings.BackgroundImage;
+			if (!string.IsNullOrEmpty(ProgramSettings.BackgroundImage)) {
+				m_backgroundImage = ProgramSettings.BackgroundImage;
 				LoadBackgroundImage();
 			}
-			if (MainWindow.Settings.AxisCenter.HasValue) {
+			if (ProgramSettings.AxisCenter.HasValue) {
 				AddAxisControlToCanvas();
-				m_axisControl.Location = MainWindow.Settings.AxisCenter.Value;
+				m_axisControl.Location = ProgramSettings.AxisCenter.Value;
 			}
 			for (int index = 0; index < Constants.ButtonCount; ++index) {
-				foreach (var point in MainWindow.Settings.ButtonPositions[index]) {
+				foreach (var point in ProgramSettings.ButtonPositions[index]) {
 					AddButtonControlToCanvas(new ButtonControl(Constants.ButtonDisplayName[index], point), m_buttonControls[index]);
 				}
 			}
@@ -148,15 +148,15 @@ namespace Xbox2Android
 
 		private void SaveAndExit_Click(object sender, RoutedEventArgs e)
 		{
-			MainWindow.Settings.BackgroundImage = m_backgroundImage;
+			ProgramSettings.BackgroundImage = m_backgroundImage;
 			if (m_axisControl != null) {
-				MainWindow.Settings.AxisCenter = m_axisControl.Location;
-				MainWindow.Settings.AxisRadius = m_axisControl.AxisRadius;
-				MainWindow.Settings.ShadowAxisOffset = m_axisControl.ShadowAxisOffset;
+				ProgramSettings.AxisCenter = m_axisControl.Location;
+				ProgramSettings.AxisRadius = m_axisControl.AxisRadius;
+				ProgramSettings.ShadowAxisOffset = m_axisControl.ShadowAxisOffset;
 			}
 			for (int index = 0; index < Constants.ButtonCount; ++index) {
-				MainWindow.Settings.ButtonPositions[index].Clear();
-				MainWindow.Settings.ButtonPositions[index].AddRange(m_buttonControls[index].Select(control => control.Location));
+				ProgramSettings.ButtonPositions[index].Clear();
+				ProgramSettings.ButtonPositions[index].AddRange(m_buttonControls[index].Select(control => control.Location));
 			}
 
 			Close();

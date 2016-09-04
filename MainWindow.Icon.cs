@@ -15,7 +15,7 @@ namespace Xbox2Android
 		MenuItem m_menuReverseAxis;
 		MenuItem m_menuExit;
 
-		void InitializeNotifyIcon()
+		void CreateNotifyIcon()
 		{
 			m_menuReverseAxis = new MenuItem("Reverse Axis");
 			m_menuReverseAxis.Click += MenuReverseAxis_Click;
@@ -46,7 +46,7 @@ namespace Xbox2Android
 		{
 			m_iconMenu.MenuItems.Clear();
 
-			m_iconMenu.MenuItems.Add(new MenuItem("Devices") { Enabled = false });
+			m_iconMenu.MenuItems.Add(new MenuItem("Connected") { Enabled = false });
 			foreach (ComboBoxItem item in comboDevices.Items) {
 				var menuItem = new MenuItem(item.Content.ToString());
 				menuItem.Click += MenuDeviceSelect_Click;
@@ -72,7 +72,7 @@ namespace Xbox2Android
 
 			m_iconMenu.MenuItems.Add(new MenuItem("-"));
 
-			m_menuReverseAxis.Checked = Settings.IsReverseAxis;
+			m_menuReverseAxis.Checked = ProgramSettings.IsReverseAxis;
 			m_iconMenu.MenuItems.AddRange(new[] { m_menuReverseAxis, new MenuItem("-"), m_menuExit });
 		}
 
@@ -88,7 +88,7 @@ namespace Xbox2Android
 
 		private void MenuReverseAxis_Click(object sender, EventArgs e)
 		{
-			checkReverseAxis.IsChecked = !Settings.IsReverseAxis;
+			checkReverseAxis.IsChecked = !ProgramSettings.IsReverseAxis;
 		}
 
 		private void MenuExit_Click(object sender, EventArgs e)

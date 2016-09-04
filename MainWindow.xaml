@@ -4,10 +4,11 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		mc:Ignorable="d"
-		Title="Xbox 2 Android" Width="275" Height="165" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" FontFamily="Segoe UI" FontSize="12" Icon="Program.ico"
+		Title="Xbox 2 Android" Width="250" Height="240" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" FontFamily="Segoe UI" FontSize="12" Icon="Program.ico"
 		Loaded="MainWindow_Loaded" Closing="MainWindow_Closing" StateChanged="MainWindow_StateChanged">
 	<Grid>
 		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
@@ -18,15 +19,21 @@
 					<ColumnDefinition Width="*" />
 				</Grid.ColumnDefinitions>
 				<Grid.RowDefinitions>
-					<RowDefinition Height="*" />
-					<RowDefinition Height="*" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
 
-				<TextBlock Text="Device Select" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" />
-				<ComboBox x:Name="comboDevices" Grid.Column="1" Grid.Row="0" Margin="5,5,0,5" Height="23" SelectionChanged="comboDevices_SelectionChanged" />
+				<StackPanel Orientation="Vertical" Grid.ColumnSpan="2" Margin="0,5,0,5">
+					<TextBlock Text="Local IPs" Margin="10,0,0,5" />
+					<ListBox x:Name="listLocalIPs" Height="43" />
+				</StackPanel>
 
-				<TextBlock Text="Trigger Mode" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Right" />
-				<ComboBox x:Name="comboTriggerMode" Grid.Column="1" Grid.Row="1" Margin="5,5,0,5" Height="23" SelectionChanged="comboTriggerMode_SelectionChanged">
+				<TextBlock Text="Connected" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Right" />
+				<ComboBox x:Name="comboDevices" Grid.Column="1" Grid.Row="1" Margin="5,5,0,5" Height="23" SelectionChanged="comboDevices_SelectionChanged" />
+
+				<TextBlock Text="Trigger Mode" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Right" />
+				<ComboBox x:Name="comboTriggerMode" Grid.Column="1" Grid.Row="2" Margin="5,5,0,5" Height="23" SelectionChanged="comboTriggerMode_SelectionChanged">
 					<ComboBox.Items>
 						<ComboBoxItem Content="Double Harmony" />
 						<ComboBoxItem Content="Double Harmony Shock!!" />

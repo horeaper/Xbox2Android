@@ -15,13 +15,13 @@ namespace Xbox2Android.Controls
 		{
 			InitializeComponent();
 			shapeBackground.Fill = UnselectedBrush;
-			textAxisRadius.Text = MainWindow.Settings.AxisRadius.ToString();
-			textShadowAxisOffset.Text = MainWindow.Settings.ShadowAxisOffset.ToString();
+			textAxisRadius.Text = ProgramSettings.AxisRadius.ToString();
+			textShadowAxisOffset.Text = ProgramSettings.ShadowAxisOffset.ToString();
 		}
 
 		private void AxisControl_OnLoaded(object sender, RoutedEventArgs e)
 		{
-			if (MainWindow.Settings.ShadowAxisOffset != 0) {
+			if (ProgramSettings.ShadowAxisOffset != 0) {
 				menuShowShadowAxis.IsChecked = true;
 				shapeShadowAxisIn.Visibility = Visibility.Visible;
 				shapeShadowAxisOut.Visibility = Visibility.Visible;

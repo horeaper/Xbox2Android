@@ -11,17 +11,16 @@ namespace Xbox2Android
 	/// </summary>
 	partial class MainWindow : Window
 	{
-		internal static ProgramSettings Settings { get; private set; }
-
 		readonly DispatcherTimer m_timer = new DispatcherTimer();
 
 		public MainWindow()
 		{
 			InitializeComponent();
 
-			Settings = ProgramSettings.Load();
-			comboTriggerMode.SelectedIndex = Settings.TriggerMode;
-			InitializeNotifyIcon();
+			ProgramSettings.Load();
+			comboTriggerMode.SelectedIndex = ProgramSettings.TriggerMode;
+			CreateNotifyIcon();
+			StartServer();
 		}
 
 		private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -30,17 +29,17 @@ namespace Xbox2Android
 			m_timer.Interval = TimeSpan.FromSeconds(1.0 / 60.0);
 			m_timer.Start();
 
-			WindowState = Settings.IsMinimized ? WindowState.Minimized : WindowState.Normal;
+			WindowState = ProgramSettings.IsMinimized ? WindowState.Minimized : WindowState.Normal;
 			MainWindow_StateChanged(null, null);
 		}
 
 		private void MainWindow_Closing(object sender, CancelEventArgs e)
 		{
-			Settings.IsMinimized = WindowState == WindowState.Minimized;
+			ProgramSettings.IsMinimized = WindowState == WindowState.Minimized;
 			m_notifyIcon.Visible = false;
 
 tagRetry:
-			if (!Settings.Save()) {
+			if (!ProgramSettings.Save()) {
 				var result = MessageBox.Show(this, "Cannot save program settings. Retry?", "Xbox Input Mapper", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
 				if (result == MessageBoxResult.Yes) {
 					goto tagRetry;
@@ -61,17 +60,16 @@ tagRetry:
 
 		private void comboDevices_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			throw new NotImplementedException();
 		}
 
 		private void comboTriggerMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-
+			ProgramSettings.TriggerMode = comboTriggerMode.SelectedIndex;
 		}
 
 		private void checkReverseAxis_CheckedChanged(object sender, RoutedEventArgs e)
 		{
-			Settings.IsReverseAxis = checkReverseAxis.IsChecked == true;
+			ProgramSettings.IsReverseAxis = checkReverseAxis.IsChecked == true;
 		}
 
 		private void btnTouchProfile_Click(object sender, RoutedEventArgs e)
