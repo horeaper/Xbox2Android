@@ -16,7 +16,6 @@ namespace XboxInputMapper
 		internal static ProgramSettings Settings { get; private set; }
 
 		readonly DispatcherTimer m_timer = new DispatcherTimer();
-		readonly Dictionary<Point, int> m_posIndexMap = new Dictionary<Point, int>();
 
 		public MainWindow()
 		{
@@ -25,9 +24,8 @@ namespace XboxInputMapper
 			Settings = ProgramSettings.Load();
 			textAdbPath.Text = Settings.AdbPath;
 			comboTriggerMode.SelectedIndex = Settings.TriggerMode;
-			RefreshPositionIndex();
 			InitializeNotifyIcon();
-			ReconnectAdb();
+			ConnectAdb();
 		}
 
 		private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -45,8 +43,9 @@ namespace XboxInputMapper
 			Settings.IsMinimized = WindowState == WindowState.Minimized;
 			Settings.AdbPath = textAdbPath.Text;
 			Settings.LastSelectedDevice = ((ComboBoxItem)comboDevices.SelectedItem)?.Content.ToString();
+			m_notifyIcon.Visible = false;
 
-		tagRetry:
+tagRetry:
 			if (!Settings.Save()) {
 				var result = MessageBox.Show(this, "Cannot save program settings. Retry?", "Xbox Input Mapper", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
 				if (result == MessageBoxResult.Yes) {
@@ -81,7 +80,6 @@ namespace XboxInputMapper
 			var profileWindow = new TouchProfileWindow();
 			profileWindow.Owner = this;
 			profileWindow.ShowDialog();
-			RefreshPositionIndex();
 		}
 	}
 }

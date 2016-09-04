@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using XboxInputMapper.Native;
 
@@ -12,30 +8,15 @@ namespace XboxInputMapper
 	{
 		const int ThumbDeadzone = short.MaxValue / 4;
 		const int TriggerDeadzone = byte.MaxValue / 2;
-		const int MaxTouchCount = 10;
+		const int AxisIndex = Constants.ButtonCount;
 		XInput.Gamepad m_previousGamepad;
 		bool m_isDirectionInEffect;
-		bool m_isLeftTriggerDown;
-		bool m_isRightTriggerDown;
 		bool m_isShadowAxis;
-
-		void RefreshPositionIndex()
-		{
-			m_posIndexMap.Clear();
-			int index = 0;
-			foreach (var positions in Settings.ButtonPositions) {
-				foreach (var point in positions) {
-					m_posIndexMap.Add(point, index++);
-				}
-			}
-		}
 
 		void ResetGamepadState()
 		{
 			m_previousGamepad = new XInput.Gamepad();
 			m_isDirectionInEffect = false;
-			m_isLeftTriggerDown = false;
-			m_isRightTriggerDown = false;
 		}
 
 		private void timer_Tick(object sender, EventArgs e)
@@ -53,7 +34,7 @@ namespace XboxInputMapper
 					}
 					if (direction.X == 0 && direction.Y == 0) {    //No direction
 						if (m_isDirectionInEffect) {
-							DoTouchUp(MaxTouchCount - 1);
+							DoTouchUp(AxisIndex);
 							m_isDirectionInEffect = false;
 						}
 					}
@@ -82,11 +63,11 @@ namespace XboxInputMapper
 						//Output
 						var point = new Point(axisCenter.X + direction.X, axisCenter.Y - direction.Y);
 						if (!m_isDirectionInEffect) {
-							DoTouchDown(MaxTouchCount - 1, point);
+							DoTouchDown(AxisIndex, point);
 							m_isDirectionInEffect = true;
 						}
 						else {
-							DoTouchUpdate(MaxTouchCount - 1, point);
+							DoTouchUpdate(AxisIndex, point);
 						}
 					}
 				}
@@ -100,150 +81,24 @@ namespace XboxInputMapper
 					if (!gamepad.Buttons.HasFlag(value)) {  //No button
 						if (isButtonInEffect) {
 							foreach (var point in Settings.ButtonPositions[buttonId]) {
-								DoTouchUp(m_posIndexMap[point]);
+								DoTouchUp(buttonId);
 							}
 						}
 					}
 					else {
 						if (!isButtonInEffect) {
 							foreach (var point in Settings.ButtonPositions[buttonId]) {
-								DoTouchDown(m_posIndexMap[point], point);
-							}
-						}
-						else {
-							foreach (var point in Settings.ButtonPositions[buttonId]) {
-								DoTouchUpdate(m_posIndexMap[point], point);
+								DoTouchDown(buttonId, point);
 							}
 						}
 					}
 				}
-
-/*
-				if (Settings.IsTriggerHappy) {
-					//Left trigger
-					bool isLeftTriggerInEffect = m_previousGamepad.LeftTrigger > TriggerDeadzone;
-					if (gamepad.LeftTrigger <= TriggerDeadzone) {   //No trigger
-						if (isLeftTriggerInEffect) {
-							if (m_isLeftTriggerDown) {
-								foreach (var point in Settings.LeftTriggerPositions) {
-									DoTouchUp(m_posMap[point]);
-								}
-							}
-							m_isLeftTriggerDown = false;
-						}
-					}
-					else {
-						if (!isLeftTriggerInEffect) {
-							foreach (var point in Settings.LeftTriggerPositions) {
-								DoTouchDown(m_posMap[point], point);
-							}
-							m_isLeftTriggerDown = true;
-						}
-						else {
-							if (m_isLeftTriggerDown) {
-								foreach (var point in Settings.LeftTriggerPositions) {
-									DoTouchUp(m_posMap[point]);
-								}
-							}
-							else {
-								foreach (var point in Settings.LeftTriggerPositions) {
-									DoTouchDown(m_posMap[point], point);
-								}
-							}
-							m_isLeftTriggerDown = !m_isLeftTriggerDown;
-						}
-					}
-
-					//Right trigger
-					bool isRightTriggerInEffect = m_previousGamepad.RightTrigger > TriggerDeadzone;
-					if (gamepad.RightTrigger <= TriggerDeadzone) {   //No trigger
-						if (isRightTriggerInEffect) {
-							if (m_isRightTriggerDown) {
-								foreach (var point in Settings.RightTriggerPositions) {
-									DoTouchUp(m_posMap[point]);
-								}
-							}
-							m_isRightTriggerDown = false;
-						}
-					}
-					else {
-						if (!isRightTriggerInEffect) {
-							foreach (var point in Settings.RightTriggerPositions) {
-								DoTouchDown(m_posMap[point], point);
-							}
-							m_isRightTriggerDown = true;
-						}
-						else {
-							if (m_isRightTriggerDown) {
-								foreach (var point in Settings.RightTriggerPositions) {
-									DoTouchUp(m_posMap[point]);
-								}
-							}
-							else {
-								foreach (var point in Settings.RightTriggerPositions) {
-									DoTouchDown(m_posMap[point], point);
-								}
-							}
-							m_isRightTriggerDown = !m_isRightTriggerDown;
-						}
-					}
-				}
-				else {
-					//Left trigger
-					bool isLeftTriggerInEffect = m_previousGamepad.LeftTrigger > TriggerDeadzone;
-					if (gamepad.LeftTrigger <= TriggerDeadzone) {   //No trigger
-						if (isLeftTriggerInEffect) {
-							foreach (var point in Settings.LeftTriggerPositions) {
-								DoTouchUp(m_posMap[point]);
-							}
-						}
-					}
-					else {
-						if (!isLeftTriggerInEffect) {
-							foreach (var point in Settings.LeftTriggerPositions) {
-								DoTouchDown(m_posMap[point], point);
-							}
-						}
-						else {
-							foreach (var point in Settings.LeftTriggerPositions) {
-								DoTouchUpdate(m_posMap[point], point);
-							}
-						}
-					}
-
-					//Right trigger
-					bool isRightTriggerInEffect = m_previousGamepad.RightTrigger > TriggerDeadzone;
-					if (gamepad.RightTrigger <= TriggerDeadzone) {   //No trigger
-						if (isRightTriggerInEffect) {
-							foreach (var point in Settings.RightTriggerPositions) {
-								DoTouchUp(m_posMap[point]);
-							}
-						}
-					}
-					else {
-						if (!isRightTriggerInEffect) {
-							foreach (var point in Settings.RightTriggerPositions) {
-								DoTouchDown(m_posMap[point], point);
-							}
-						}
-						else {
-							foreach (var point in Settings.RightTriggerPositions) {
-								DoTouchUpdate(m_posMap[point], point);
-							}
-						}
-					}
-				}
-*/
 
 				m_previousGamepad = gamepad;
-
 				SendTouchData();
 			}
 			else {
-				m_previousGamepad = new XInput.Gamepad();
-				m_isDirectionInEffect = false;
-				m_isLeftTriggerDown = false;
-				m_isRightTriggerDown = false;
+				ResetGamepadState();
 			}
 		}
 	}

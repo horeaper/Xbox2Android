@@ -43,12 +43,12 @@ namespace XboxInputMapper
 			}
 		}
 
-		void btnRefresh_Click(object sender, RoutedEventArgs e)
+		void RefreshButton_Click(object sender, RoutedEventArgs e)
 		{
-			ReconnectAdb();
+			ConnectAdb();
 		}
 
-		void ReconnectAdb()
+		void ConnectAdb()
 		{
 			ClearAdb();
 			if (File.Exists(textAdbPath.Text)) {
@@ -90,18 +90,17 @@ namespace XboxInputMapper
 			m_selectedDevice = null;
 			m_inputEventPath = null;
 			Dispatcher.Invoke(() => textInputEvent.Text = "");
+			ResetGamepadState();
 
 			if (comboDevices.SelectedItem != null) {
-				m_selectedDevice = (IDevice)((ComboBoxItem)comboDevices.SelectedItem).Tag;
-				ResetGamepadState();
-
 				var command = new ShellCommandReceiver();
-				command.Complete += CommandReceiver_Complete;
+				command.Complete += GetDeviceCommandReceiver_Complete;
+				m_selectedDevice = (IDevice)((ComboBoxItem)comboDevices.SelectedItem).Tag;
 				m_selectedDevice.ExecuteShellCommand("getevent -pl", command);
 			}
 		}
 
-		private void CommandReceiver_Complete(object sender, EventArgs e)
+		private void GetDeviceCommandReceiver_Complete(object sender, EventArgs e)
 		{
 			var command = (ShellCommandReceiver)sender;
 
@@ -134,37 +133,69 @@ namespace XboxInputMapper
 			Dispatcher.Invoke(() => textInputEvent.Text = m_inputEventPath);
 		}
 
-		const int EV_ABS = 3;
-		const int EV_SYN = 0;
+		const int EV_SYN = 0x0000;
+		const int EV_KEY = 0x0001;
+		const int EV_ABS = 0x0003;
 
 		const int BTN_TOUCH = 0x014A;
-		const int TOUCH_DOWN = 1;
-		const int TOUCH_UP = 0;
+		const int TOUCH_DOWN = 0x0001;
+		const int TOUCH_UP = 0x0000;
 
-		const int ABS_MT_POSITION_X = 53;
-		const int ABS_MT_POSITION_Y = 54;
-		const int ABS_MT_PRESSURE = 58;
-		const int SYN_MT_REPORT = 2;
-		const int SYN_REPORT = 0;
+		const int ABS_MT_PRESSURE = 0x003A;
+		const int ABS_MT_POSITION_X = 0x0035;
+		const int ABS_MT_POSITION_Y = 0x0036;
+		const int SYN_MT_REPORT = 0x0002;
+		const int SYN_REPORT = 0x0000;
+
+		bool[] m_isTouchDown = new bool[Constants.TotalInputPoints];
+		Point[] m_touchPosition = new Point[Constants.TotalInputPoints];
+		bool m_isDataDirty;
+		List<Point> m_dataBuffer = new List<Point>(Constants.TotalInputPoints);
+		StringBuilder m_sendString = new StringBuilder();
 
 		void DoTouchDown(int index, Point point)
 		{
-
+			m_isDataDirty = true;
+			m_isTouchDown[index] = true;
+			m_touchPosition[index] = point;
 		}
 
 		void DoTouchUpdate(int index, Point point)
 		{
-
+			m_isDataDirty = true;
+			m_isTouchDown[index] = true;
+			m_touchPosition[index] = point;
 		}
 
 		void DoTouchUp(int index)
 		{
-
+			m_isDataDirty = true;
+			m_isTouchDown[index] = false;
 		}
 
 		void SendTouchData()
 		{
+			if (m_isDataDirty) {
+				m_dataBuffer.Clear();
+				for (int cnt = 0; cnt < Constants.TotalInputPoints; ++cnt) {
+					if (m_isTouchDown[cnt]) {
+						m_dataBuffer.Add(m_touchPosition[cnt]);
+					}
+				}
 
+				m_sendString.Clear();
+				if (m_dataBuffer.Count > 0) {
+					m_sendString.AppendFormat("", null);
+				}
+				else {
+					foreach (var point in m_dataBuffer) {
+						int x = (int)Math.Round(point.X);
+						int y = (int)Math.Round(point.Y);
+					}
+				}
+
+				m_isDataDirty = false;
+			}
 		}
 	}
 }

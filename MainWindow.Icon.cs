@@ -17,20 +17,11 @@ namespace XboxInputMapper
 		NotifyIcon m_notifyIcon;
 		ContextMenu m_iconMenu;
 
-		MenuItem m_menuDeviceSelect;
-		MenuItem m_menuTriggerMode;
 		MenuItem m_menuReverseAxis;
 		MenuItem m_menuExit;
 
 		void InitializeNotifyIcon()
 		{
-			m_menuDeviceSelect = new MenuItem("Device Select");
-			m_menuTriggerMode = new MenuItem("Trigger Mode");
-			foreach (ComboBoxItem item in comboTriggerMode.Items) {
-				var menuItem = new MenuItem(item.Content.ToString());
-				menuItem.Click += MenuTriggerMode_Click;
-				m_menuTriggerMode.MenuItems.Add(menuItem);
-			}
 			m_menuReverseAxis = new MenuItem("Reverse Axis");
 			m_menuReverseAxis.Click += MenuReverseAxis_Click;
 			m_menuExit = new MenuItem("Exit");
@@ -38,7 +29,6 @@ namespace XboxInputMapper
 
 			m_iconMenu = new ContextMenu();
 			m_iconMenu.Popup += ContextMenu_Popup;
-			m_iconMenu.MenuItems.AddRange(new[] { m_menuDeviceSelect, m_menuTriggerMode, m_menuReverseAxis, new MenuItem("-"), m_menuExit });
 
 			m_notifyIcon = new NotifyIcon();
 			m_notifyIcon.Icon = Properties.Resources.Program;
@@ -59,23 +49,36 @@ namespace XboxInputMapper
 
 		private void ContextMenu_Popup(object sender, EventArgs e)
 		{
-			m_menuDeviceSelect.MenuItems.Clear();
+			m_iconMenu.MenuItems.Clear();
+
+			m_iconMenu.MenuItems.Add(new MenuItem("Devices") { Enabled = false });
 			foreach (ComboBoxItem item in comboDevices.Items) {
 				var menuItem = new MenuItem(item.Content.ToString());
 				menuItem.Click += MenuDeviceSelect_Click;
-				m_menuDeviceSelect.MenuItems.Add(menuItem);
-			}
-			foreach (MenuItem item in m_menuTriggerMode.MenuItems) {
-				item.Checked = false;
+				menuItem.Tag = item;
+				m_iconMenu.MenuItems.Add(menuItem);
+				if (ReferenceEquals(item, comboDevices.SelectedItem)) {
+					menuItem.Checked = true;
+				}
 			}
 
-			if (comboDevices.SelectedIndex != -1) {
-				m_menuDeviceSelect.MenuItems[comboDevices.SelectedIndex].Checked = true;
+			m_iconMenu.MenuItems.Add(new MenuItem("-"));
+
+			m_iconMenu.MenuItems.Add(new MenuItem("Trigger Mode") { Enabled = false });
+			foreach (ComboBoxItem item in comboTriggerMode.Items) {
+				var menuItem = new MenuItem(item.Content.ToString());
+				menuItem.Click += MenuTriggerMode_Click;
+				menuItem.Tag = item;
+				m_iconMenu.MenuItems.Add(menuItem);
+				if (ReferenceEquals(item, comboTriggerMode.SelectedItem)) {
+					menuItem.Checked = true;
+				}
 			}
-			if (comboTriggerMode.SelectedIndex != -1) {
-				m_menuTriggerMode.MenuItems[comboTriggerMode.SelectedIndex].Checked = true;
-			}
+
+			m_iconMenu.MenuItems.Add(new MenuItem("-"));
+
 			m_menuReverseAxis.Checked = Settings.IsReverseAxis;
+			m_iconMenu.MenuItems.AddRange(new[] { m_menuReverseAxis, new MenuItem("-"), m_menuExit });
 		}
 
 		private void MenuDeviceSelect_Click(object sender, EventArgs e)
