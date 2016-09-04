@@ -8,7 +8,6 @@ namespace XboxInputMapper
 	{
 		const int ThumbDeadzone = short.MaxValue / 4;
 		const int TriggerDeadzone = byte.MaxValue / 2;
-		const int AxisIndex = Constants.ButtonCount;
 		XInput.Gamepad m_previousGamepad;
 		bool m_isDirectionInEffect;
 		bool m_isShadowAxis;
@@ -34,7 +33,7 @@ namespace XboxInputMapper
 					}
 					if (direction.X == 0 && direction.Y == 0) {    //No direction
 						if (m_isDirectionInEffect) {
-							DoTouchUp(AxisIndex);
+							AxisUp();
 							m_isDirectionInEffect = false;
 						}
 					}
@@ -63,11 +62,11 @@ namespace XboxInputMapper
 						//Output
 						var point = new Point(axisCenter.X + direction.X, axisCenter.Y - direction.Y);
 						if (!m_isDirectionInEffect) {
-							DoTouchDown(AxisIndex, point);
+							AxisDown(point);
 							m_isDirectionInEffect = true;
 						}
 						else {
-							DoTouchUpdate(AxisIndex, point);
+							AxisUpdate(point);
 						}
 					}
 				}
@@ -76,20 +75,17 @@ namespace XboxInputMapper
 
 				//Button
 				for (int buttonId = 0; buttonId < Constants.ButtonValue.Length; ++buttonId) {
-					var value = Constants.ButtonValue[buttonId];
-					bool isButtonInEffect = m_previousGamepad.Buttons.HasFlag(value);
-					if (!gamepad.Buttons.HasFlag(value)) {  //No button
-						if (isButtonInEffect) {
-							foreach (var point in Settings.ButtonPositions[buttonId]) {
-								DoTouchUp(buttonId);
-							}
+					var flag = Constants.ButtonValue[buttonId];
+					bool isButtonInEffect = m_previousGamepad.Buttons.HasFlag(flag);
+					bool isButtonDown = gamepad.Buttons.HasFlag(flag);
+					if (isButtonDown) {
+						if (!isButtonInEffect) {
+							ButtonDown(buttonId);
 						}
 					}
 					else {
-						if (!isButtonInEffect) {
-							foreach (var point in Settings.ButtonPositions[buttonId]) {
-								DoTouchDown(buttonId, point);
-							}
+						if (isButtonInEffect) {
+							ButtonUp(buttonId);
 						}
 					}
 				}

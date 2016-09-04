@@ -83,12 +83,12 @@ namespace XboxInputMapper
 
 		private void MenuDeviceSelect_Click(object sender, EventArgs e)
 		{
-
+			comboDevices.SelectedItem = ((MenuItem)sender).Tag;
 		}
 
 		private void MenuTriggerMode_Click(object sender, EventArgs e)
 		{
-
+			comboTriggerMode.SelectedItem = ((MenuItem)sender).Tag;
 		}
 
 		private void MenuReverseAxis_Click(object sender, EventArgs e)

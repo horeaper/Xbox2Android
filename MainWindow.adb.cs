@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -147,53 +148,89 @@ namespace XboxInputMapper
 		const int SYN_MT_REPORT = 0x0002;
 		const int SYN_REPORT = 0x0000;
 
-		bool[] m_isTouchDown = new bool[Constants.TotalInputPoints];
-		Point[] m_touchPosition = new Point[Constants.TotalInputPoints];
+		bool m_isPreviousTouchDown;
+		Point? m_axisPosition;
+		bool[] m_isButtonDown = new bool[Constants.ButtonCount];
 		bool m_isDataDirty;
-		List<Point> m_dataBuffer = new List<Point>(Constants.TotalInputPoints);
+		List<Point> m_dataBuffer = new List<Point>(10);
 		StringBuilder m_sendString = new StringBuilder();
 
-		void DoTouchDown(int index, Point point)
+		void AxisDown(Point point)
 		{
 			m_isDataDirty = true;
-			m_isTouchDown[index] = true;
-			m_touchPosition[index] = point;
+			m_axisPosition = point;
 		}
 
-		void DoTouchUpdate(int index, Point point)
+		void AxisUpdate(Point point)
 		{
+			if (m_axisPosition.HasValue && m_axisPosition.Value == point) {
+				return;
+			}
+
 			m_isDataDirty = true;
-			m_isTouchDown[index] = true;
-			m_touchPosition[index] = point;
+			m_axisPosition = point;
 		}
 
-		void DoTouchUp(int index)
+		void AxisUp()
 		{
 			m_isDataDirty = true;
-			m_isTouchDown[index] = false;
+			m_axisPosition = null;
+		}
+
+		void ButtonDown(int index)
+		{
+			m_isDataDirty = true;
+			m_isButtonDown[index] = true;
+		}
+
+		void ButtonUp(int index)
+		{
+			m_isDataDirty = true;
+			m_isButtonDown[index] = false;
 		}
 
 		void SendTouchData()
 		{
-			if (m_isDataDirty) {
+			if (m_isDataDirty && m_selectedDevice != null) {
 				m_dataBuffer.Clear();
-				for (int cnt = 0; cnt < Constants.TotalInputPoints; ++cnt) {
-					if (m_isTouchDown[cnt]) {
-						m_dataBuffer.Add(m_touchPosition[cnt]);
+				if (m_axisPosition.HasValue) {
+					m_dataBuffer.Add(m_axisPosition.Value);
+				}
+				for (int cnt = 0; cnt < Constants.ButtonCount; ++cnt) {
+					if (m_isButtonDown[cnt]) {
+						m_dataBuffer.AddRange(Settings.ButtonPositions[cnt]);
 					}
 				}
 
 				m_sendString.Clear();
+				Action<int, int, int> fnSendEvent = (eventType, inputType, param) => m_sendString.AppendFormat("sendevent {0} {1} {2} {3};", m_inputEventPath, eventType, inputType, param);
+
 				if (m_dataBuffer.Count > 0) {
-					m_sendString.AppendFormat("", null);
-				}
-				else {
+					if (!m_isPreviousTouchDown) {
+						fnSendEvent(EV_KEY, BTN_TOUCH, TOUCH_DOWN);
+						m_isPreviousTouchDown = true;
+					}
 					foreach (var point in m_dataBuffer) {
 						int x = (int)Math.Round(point.X);
 						int y = (int)Math.Round(point.Y);
+						fnSendEvent(EV_ABS, ABS_MT_POSITION_X, x);
+						fnSendEvent(EV_ABS, ABS_MT_POSITION_Y, y);
+						fnSendEvent(EV_SYN, SYN_MT_REPORT, 0);
+					}
+					fnSendEvent(EV_SYN, SYN_REPORT, 0);
+				}
+				else {
+					fnSendEvent(EV_SYN, SYN_MT_REPORT, 0);
+					fnSendEvent(EV_SYN, SYN_REPORT, 0);
+					if (m_isPreviousTouchDown) {
+						fnSendEvent(EV_KEY, BTN_TOUCH, TOUCH_UP);
+						fnSendEvent(EV_SYN, SYN_MT_REPORT, 0);
+						fnSendEvent(EV_SYN, SYN_REPORT, 0);
+						m_isPreviousTouchDown = false;
 					}
 				}
 
+				m_selectedDevice.ExecuteShellCommand(m_sendString.ToString(), new ShellCommandReceiver());
 				m_isDataDirty = false;
 			}
 		}

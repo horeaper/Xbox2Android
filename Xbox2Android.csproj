@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{F6AF006F-D3B2-412B-B987-5E20A1F0F144}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>XboxInputMapper</RootNamespace>
     <AssemblyName>XboxInputMapper</AssemblyName>
@@ -38,6 +38,9 @@
     <ApplicationIcon>Program.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup />
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Camalot.Common, Version=1.0.5937.17275, Culture=neutral, PublicKeyToken=02434577b8ec3216, processorArchitecture=MSIL">
       <HintPath>packages\Camalot.Common.1.0.5937.17275\lib\net45\Camalot.Common.dll</HintPath>
