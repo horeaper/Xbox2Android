@@ -7,10 +7,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
-using XboxInputMapper.Controls;
-using XboxInputMapper.Native;
+using Xbox2Android.Controls;
+using Xbox2Android.Native;
 
-namespace XboxInputMapper
+namespace Xbox2Android
 {
 	/// <summary>
 	/// Interaction logic for TouchProfileWindow.xaml

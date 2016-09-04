@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace XboxInputMapper.Controls
+namespace Xbox2Android.Controls
 {
 	public partial class ButtonControl : UserControl, IDisplayControl
 	{

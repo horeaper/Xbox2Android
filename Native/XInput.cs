@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace XboxInputMapper.Native
+namespace Xbox2Android.Native
 {
 	static class XInput
 	{

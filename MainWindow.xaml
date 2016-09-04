@@ -1,10 +1,10 @@
-﻿<Window x:Class="XboxInputMapper.MainWindow"
+﻿<Window x:Class="Xbox2Android.MainWindow"
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		mc:Ignorable="d"
-		Title="Xbox 2 Android" Width="275" Height="250" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" FontFamily="Segoe UI" FontSize="12" Icon="Program.ico"
+		Title="Xbox 2 Android" Width="275" Height="165" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" FontFamily="Segoe UI" FontSize="12" Icon="Program.ico"
 		Loaded="MainWindow_Loaded" Closing="MainWindow_Closing" StateChanged="MainWindow_StateChanged">
 	<Grid>
 		<Grid.RowDefinitions>
@@ -12,20 +12,6 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 		<StackPanel Orientation="Vertical" Grid.RowSpan="2">
-			<TextBlock HorizontalAlignment="Left" Margin="10,10,0,2" Text="ADB Path"/>
-			<Grid Margin="10,2,10,5" >
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="Auto"/>
-				</Grid.ColumnDefinitions>
-				<TextBox x:Name="textAdbPath" HorizontalAlignment="Stretch" Height="23" VerticalContentAlignment="Center" />
-				<Button Grid.Column="1" Width="25" Margin="5,0,0,0" Click="RefreshButton_Click">
-					<Button.Content>
-						<Image Source="Refresh.png" />
-					</Button.Content>
-				</Button>
-			</Grid>
-
 			<Grid Margin="10,0,10,0">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />
@@ -34,17 +20,13 @@
 				<Grid.RowDefinitions>
 					<RowDefinition Height="*" />
 					<RowDefinition Height="*" />
-					<RowDefinition Height="*" />
 				</Grid.RowDefinitions>
 
 				<TextBlock Text="Device Select" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" />
 				<ComboBox x:Name="comboDevices" Grid.Column="1" Grid.Row="0" Margin="5,5,0,5" Height="23" SelectionChanged="comboDevices_SelectionChanged" />
 
-				<TextBlock Text="Input Event" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Right" />
-				<TextBox x:Name="textInputEvent" Grid.Column="1" Grid.Row="1" Margin="5,5,0,5" Height="23" VerticalContentAlignment="Center" IsReadOnly="True" />
-
-				<TextBlock Text="Trigger Mode" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Right" />
-				<ComboBox x:Name="comboTriggerMode" Grid.Column="1" Grid.Row="2" Margin="5,5,0,5" Height="23" SelectionChanged="comboTriggerMode_SelectionChanged">
+				<TextBlock Text="Trigger Mode" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Right" />
+				<ComboBox x:Name="comboTriggerMode" Grid.Column="1" Grid.Row="1" Margin="5,5,0,5" Height="23" SelectionChanged="comboTriggerMode_SelectionChanged">
 					<ComboBox.Items>
 						<ComboBoxItem Content="Double Harmony" />
 						<ComboBoxItem Content="Double Harmony Shock!!" />

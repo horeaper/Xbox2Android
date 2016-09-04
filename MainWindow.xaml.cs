@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using XboxInputMapper.Native;
 
-namespace XboxInputMapper
+namespace Xbox2Android
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
@@ -22,10 +20,8 @@ namespace XboxInputMapper
 			InitializeComponent();
 
 			Settings = ProgramSettings.Load();
-			textAdbPath.Text = Settings.AdbPath;
 			comboTriggerMode.SelectedIndex = Settings.TriggerMode;
 			InitializeNotifyIcon();
-			ConnectAdb();
 		}
 
 		private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -41,8 +37,6 @@ namespace XboxInputMapper
 		private void MainWindow_Closing(object sender, CancelEventArgs e)
 		{
 			Settings.IsMinimized = WindowState == WindowState.Minimized;
-			Settings.AdbPath = textAdbPath.Text;
-			Settings.LastSelectedDevice = ((ComboBoxItem)comboDevices.SelectedItem)?.Content.ToString();
 			m_notifyIcon.Visible = false;
 
 tagRetry:
@@ -63,6 +57,11 @@ tagRetry:
 				Hide();
 				m_notifyIcon.Visible = true;
 			}
+		}
+
+		private void comboDevices_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			throw new NotImplementedException();
 		}
 
 		private void comboTriggerMode_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace XboxInputMapper.Properties {
+namespace Xbox2Android.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

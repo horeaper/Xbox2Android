@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace XboxInputMapper.Controls
+namespace Xbox2Android.Controls
 {
 	interface IDisplayControl : IInputElement
 	{

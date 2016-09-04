@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace XboxInputMapper
+namespace Xbox2Android
 {
 	public partial class App : Application
 	{

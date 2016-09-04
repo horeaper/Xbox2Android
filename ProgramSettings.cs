@@ -4,15 +4,12 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows;
 
-namespace XboxInputMapper
+namespace Xbox2Android
 {
 	[Serializable]
 	class ProgramSettings
 	{
 		public bool IsMinimized = false;
-
-		public string AdbPath = "";
-		public string LastSelectedDevice;
 
 		public int TriggerMode = 0;
 		public bool IsReverseAxis = false;
