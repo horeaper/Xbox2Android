@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minWidth="25px"
+    android:minHeight="25px"
+    android:paddingLeft="5pt"
+    android:paddingRight="5pt"
+    android:paddingTop="5pt"
+    android:paddingBottom="5pt">
+    <TextView
+        android:text="Name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5pt" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textName"
+        android:layout_marginBottom="10pt" />
+    <TextView
+        android:text="Server IP"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5pt" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textIP"
+        android:layout_marginBottom="10pt" />
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*"
+        android:layout_marginBottom="10pt">
+        <TableRow>
+            <Button
+                android:text="Connect"
+                android:enabled="true"
+                android:id="@+id/buttonConnect" />
+            <Button
+                android:text="Stop"
+                android:enabled="false"
+                android:id="@+id/buttonStop" />
+        </TableRow>
+    </TableLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/labelStatus" />
+</LinearLayout>

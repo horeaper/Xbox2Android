@@ -57,14 +57,7 @@ namespace Xbox2Android
 			try {
 				var socket = listener.EndAccept(ar);
 				var client = new ClientParam { Socket = socket };
-				socket.BeginReceive(client.Buffer, 0, client.Buffer.Length, SocketFlags.None, ReceiveDataCallback, client);
-				m_clients.Add(client);
-				Dispatcher.Invoke(() => {
-					comboDevices.Items.Add(new ComboBoxItem {
-						Content = client.Socket.RemoteEndPoint.ToString(),
-						Tag = client,
-					});
-				});
+				socket.BeginReceive(client.Buffer, 0, client.Buffer.Length, SocketFlags.None, ReceiveFirstDataCallback, client);
 			}
 			catch (SocketException) {
 				listener.Dispose();
@@ -77,7 +70,7 @@ namespace Xbox2Android
 			listener.BeginAccept(ClientConnectCallback, listener);
 		}
 
-		void ReceiveDataCallback(IAsyncResult ar)
+		void ReceiveFirstDataCallback(IAsyncResult ar)
 		{
 			var client = (ClientParam)ar.AsyncState;
 
@@ -100,7 +93,41 @@ namespace Xbox2Android
 				return;
 			}
 
-			client.Socket.BeginReceive(client.Buffer, 0, client.Buffer.Length, SocketFlags.None, ReceiveDataCallback, client);
+			m_clients.Add(client);
+			Dispatcher.Invoke(() => {
+				comboDevices.Items.Add(new ComboBoxItem {
+					Content = Encoding.UTF8.GetString(client.Buffer, 0, bytesReceived),
+					Tag = client,
+				});
+			});
+
+			client.Socket.BeginReceive(client.Buffer, 0, client.Buffer.Length, SocketFlags.None, ReceiveNextDataCallback, client);
+		}
+
+		void ReceiveNextDataCallback(IAsyncResult ar)
+		{
+			var client = (ClientParam)ar.AsyncState;
+
+			int bytesReceived;
+			try {
+				bytesReceived = client.Socket.EndReceive(ar);
+			}
+			catch (SocketException) {
+				client.Socket.Dispose();
+				RemoveClient(client);
+				return;
+			}
+			catch (ObjectDisposedException) {
+				RemoveClient(client);
+				return;
+			}
+			if (bytesReceived == 0) {
+				client.Socket.Dispose();
+				RemoveClient(client);
+				return;
+			}
+
+			client.Socket.BeginReceive(client.Buffer, 0, client.Buffer.Length, SocketFlags.None, ReceiveNextDataCallback, client);
 		}
 
 		public void SendString(ClientParam client, string text)
