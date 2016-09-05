@@ -66,9 +66,6 @@ namespace Xbox2AndroidClient
 			// aapt resource value: 0x7f040003
 			public const int buttonStop = 2130968579;
 			
-			// aapt resource value: 0x7f040004
-			public const int labelStatus = 2130968580;
-			
 			// aapt resource value: 0x7f040001
 			public const int textIP = 2130968577;
 			

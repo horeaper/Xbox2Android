@@ -16,7 +16,7 @@ namespace Xbox2Android
 		public class ClientParam
 		{
 			public Socket Socket;
-			public byte[] Buffer = new byte[2048];
+			public byte[] Buffer = new byte[1400];
 		}
 
 		readonly List<ClientParam> m_clients = new List<ClientParam>();
@@ -33,7 +33,7 @@ namespace Xbox2Android
 					var listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 					listener.Bind(new IPEndPoint(ip, ListenPort));
 					listener.Listen(10);
-					listener.BeginAccept(ClientConnectCallback, listener);
+					listener.BeginAccept(ClientConnectedCallback, listener);
 				}
 			}
 		}
@@ -50,7 +50,7 @@ namespace Xbox2Android
 			}
 		}
 
-		void ClientConnectCallback(IAsyncResult ar)
+		void ClientConnectedCallback(IAsyncResult ar)
 		{
 			var listener = (Socket)ar.AsyncState;
 
@@ -67,7 +67,7 @@ namespace Xbox2Android
 				return;
 			}
 
-			listener.BeginAccept(ClientConnectCallback, listener);
+			listener.BeginAccept(ClientConnectedCallback, listener);
 		}
 
 		void ReceiveFirstDataCallback(IAsyncResult ar)
@@ -99,6 +99,9 @@ namespace Xbox2Android
 					Content = Encoding.UTF8.GetString(client.Buffer, 0, bytesReceived),
 					Tag = client,
 				});
+				if (comboDevices.SelectedIndex == -1) {
+					comboDevices.SelectedIndex = 0;
+				}
 			});
 
 			client.Socket.BeginReceive(client.Buffer, 0, client.Buffer.Length, SocketFlags.None, ReceiveNextDataCallback, client);

@@ -18,7 +18,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textName"
-        android:layout_marginBottom="10pt" />
+        android:layout_marginBottom="10pt"
+        android:maxLines="1" />
     <TextView
         android:text="Server IP"
         android:layout_width="match_parent"
@@ -28,7 +29,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textIP"
-        android:layout_marginBottom="10pt" />
+        android:layout_marginBottom="10pt"
+        android:maxLines="1" />
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -45,8 +47,4 @@
                 android:id="@+id/buttonStop" />
         </TableRow>
     </TableLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/labelStatus" />
 </LinearLayout>

@@ -169,29 +169,29 @@ namespace Xbox2Android
 				}
 
 				m_sendString.Clear();
-				Action<int, int, int> fnSendEvent = (eventType, inputType, param) => m_sendString.AppendFormat("{0} {1} {2};", eventType, inputType, param);
+				Action<int, int, int> fnFormatString = (eventType, inputType, param) => m_sendString.AppendFormat("{0} {1} {2}\n", eventType, inputType, param);
 
 				if (m_dataBuffer.Count > 0) {
 					if (!m_isPreviousTouchDown) {
-						fnSendEvent(EV_KEY, BTN_TOUCH, TOUCH_DOWN);
+						fnFormatString(EV_KEY, BTN_TOUCH, TOUCH_DOWN);
 						m_isPreviousTouchDown = true;
 					}
 					foreach (var point in m_dataBuffer) {
 						int x = (int)Math.Round(point.X);
 						int y = (int)Math.Round(point.Y);
-						fnSendEvent(EV_ABS, ABS_MT_POSITION_X, x);
-						fnSendEvent(EV_ABS, ABS_MT_POSITION_Y, y);
-						fnSendEvent(EV_SYN, SYN_MT_REPORT, 0);
+						fnFormatString(EV_ABS, ABS_MT_POSITION_X, x);
+						fnFormatString(EV_ABS, ABS_MT_POSITION_Y, y);
+						fnFormatString(EV_SYN, SYN_MT_REPORT, 0);
 					}
-					fnSendEvent(EV_SYN, SYN_REPORT, 0);
+					fnFormatString(EV_SYN, SYN_REPORT, 0);
 				}
 				else {
-					fnSendEvent(EV_SYN, SYN_MT_REPORT, 0);
-					fnSendEvent(EV_SYN, SYN_REPORT, 0);
+					fnFormatString(EV_SYN, SYN_MT_REPORT, 0);
+					fnFormatString(EV_SYN, SYN_REPORT, 0);
 					if (m_isPreviousTouchDown) {
-						fnSendEvent(EV_KEY, BTN_TOUCH, TOUCH_UP);
-						fnSendEvent(EV_SYN, SYN_MT_REPORT, 0);
-						fnSendEvent(EV_SYN, SYN_REPORT, 0);
+						fnFormatString(EV_KEY, BTN_TOUCH, TOUCH_UP);
+						fnFormatString(EV_SYN, SYN_MT_REPORT, 0);
+						fnFormatString(EV_SYN, SYN_REPORT, 0);
 						m_isPreviousTouchDown = false;
 					}
 				}
