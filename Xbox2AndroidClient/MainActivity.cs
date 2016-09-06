@@ -73,7 +73,7 @@ namespace Xbox2AndroidClient
 			}
 			else {
 				var dialog = new AlertDialog.Builder(this);
-				dialog.SetMessage("Invalid name or IP specified (╯‵□′)╯︵┻━┻");
+				dialog.SetMessage("Invalid name or IP specified.");
 				dialog.SetNeutralButton("OK", (s, ev) => { });
 				dialog.Show();
 			}

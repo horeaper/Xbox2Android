@@ -1,16 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Sockets;
 using System.Text;
-
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Java.IO;
 
 namespace Xbox2AndroidClient
@@ -35,14 +28,13 @@ namespace Xbox2AndroidClient
 			IsRunning = true;
 
 			m_socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
-			m_socket.BeginConnect(MainActivity.IP,  MainActivity.ServerPort, ServerConnectedCallback, m_socket);
+			m_socket.BeginConnect(MainActivity.IP, MainActivity.ServerPort, ServerConnectedCallback, m_socket);
 			m_proc = Java.Lang.Runtime.GetRuntime().Exec("su");
 			m_output = new DataOutputStream(m_proc.OutputStream);
 		}
 
 		public override void OnDestroy()
 		{
-			base.OnDestroy();
 			m_socket.Dispose();
 			m_socket = null;
 			m_output.WriteBytes("exit\n");
@@ -51,6 +43,7 @@ namespace Xbox2AndroidClient
 			if (MainActivity.Instance != null) {
 				MainActivity.Instance.SetServiceRunning(false);
 			}
+			base.OnDestroy();
 		}
 
 		void ServerConnectedCallback(IAsyncResult ar)
@@ -94,7 +87,7 @@ namespace Xbox2AndroidClient
 
 			var data = new byte[bytesReceived];
 			Array.Copy(m_buffer, data, bytesReceived);
-			m_handler.Post(() => ProcessReceivedData(data));
+			ProcessReceivedData(data);
 			socket.BeginReceive(m_buffer, 0, m_buffer.Length, SocketFlags.None, DataReceivedCallback, socket);
 		}
 
@@ -102,15 +95,20 @@ namespace Xbox2AndroidClient
 
 		void ProcessReceivedData(byte[] data)
 		{
+			bool isDataOutput = false;
 			foreach (var item in data) {
 				if (item != '\n') {
 					m_sendString.Append((char)item);
 				}
 				else {
-					var text = m_sendString.ToString();
-
+					string command = $"sendevent {MainActivity.InputEvent} {m_sendString.ToString()}\n";
+					m_output.WriteBytes(command);
 					m_sendString.Clear();
+					isDataOutput = true;
 				}
+			}
+			if (isDataOutput) {
+				m_output.Flush();
 			}
 		}
 	}

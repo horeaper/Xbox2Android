@@ -42,12 +42,14 @@ namespace Xbox2Android
 		{
 			m_clients.Remove(client);
 
-			foreach (ComboBoxItem item in comboDevices.Items) {
-				if (ReferenceEquals(item.Tag, client)) {
-					comboDevices.Items.Remove(item);
-					return;
+			Dispatcher.Invoke(() => {
+				foreach (ComboBoxItem item in comboDevices.Items) {
+					if (ReferenceEquals(item.Tag, client)) {
+						comboDevices.Items.Remove(item);
+						return;
+					}
 				}
-			}
+			});
 		}
 
 		void ClientConnectedCallback(IAsyncResult ar)
