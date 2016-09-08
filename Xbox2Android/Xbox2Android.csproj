@@ -74,7 +74,7 @@
     <Compile Include="MainWindow.Input.cs" />
     <Compile Include="MainWindow.Network.cs" />
     <Compile Include="Native\XInput.cs" />
-    <Compile Include="Xbox2Android.cs" />
+    <Compile Include="ProgramSettings.cs" />
     <Compile Include="TouchProfileWindow.xaml.cs">
       <DependentUpon>TouchProfileWindow.xaml</DependentUpon>
     </Compile>

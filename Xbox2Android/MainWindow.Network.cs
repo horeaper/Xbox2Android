@@ -135,9 +135,8 @@ namespace Xbox2Android
 			client.Socket.BeginReceive(client.Buffer, 0, client.Buffer.Length, SocketFlags.None, ReceiveNextDataCallback, client);
 		}
 
-		public void SendString(ClientParam client, string text)
+		public void SendData(ClientParam client, byte[] data)
 		{
-			var data = Encoding.ASCII.GetBytes(text);
 			client.Socket.BeginSend(data, 0, data.Length, SocketFlags.None, SendDataCallback, client);
 		}
 

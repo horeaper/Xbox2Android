@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using Android.App;
 using Android.Content;
@@ -91,24 +93,37 @@ namespace Xbox2AndroidClient
 			socket.BeginReceive(m_buffer, 0, m_buffer.Length, SocketFlags.None, DataReceivedCallback, socket);
 		}
 
-		StringBuilder m_sendString = new StringBuilder();
+		byte[] m_receivedData = new byte[6];
+		int m_dataIndex = 0;
+
+		[StructLayout(LayoutKind.Sequential, Pack = 1)]
+		struct InputEvent
+		{
+			public short type;
+			public short code;
+			public short value;
+		}
+
+		List<InputEvent> m_pendingEvents = new List<InputEvent>();
 
 		void ProcessReceivedData(byte[] data)
 		{
-			bool isDataOutput = false;
 			foreach (var item in data) {
-				if (item != '\n') {
-					m_sendString.Append((char)item);
-				}
-				else {
-					string command = $"sendevent {MainActivity.InputEvent} {m_sendString.ToString()}\n";
-					m_output.WriteBytes(command);
-					m_sendString.Clear();
-					isDataOutput = true;
+				m_receivedData[m_dataIndex++] = item;
+				if (m_dataIndex == 6) {
+					m_dataIndex = 0;
+					m_pendingEvents.Add(new InputEvent {
+						type = (short)(m_receivedData[0] | m_receivedData[1] << 8),
+						code = (short)(m_receivedData[2] | m_receivedData[3] << 8),
+						value = (short)(m_receivedData[4] | m_receivedData[5] << 8),
+					});
 				}
 			}
-			if (isDataOutput) {
-				m_output.Flush();
+
+			if (m_pendingEvents.Count > 0) {
+				//TODO: Inject
+
+				m_pendingEvents.Clear();
 			}
 		}
 	}

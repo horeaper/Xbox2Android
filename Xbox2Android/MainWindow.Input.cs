@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -101,26 +102,25 @@ namespace Xbox2Android
 			}
 		}
 
-		const int EV_SYN = 0x0000;
-		const int EV_KEY = 0x0001;
-		const int EV_ABS = 0x0003;
+		const short EV_SYN = 0x0000;
+		const short EV_KEY = 0x0001;
+		const short EV_ABS = 0x0003;
 
-		const int BTN_TOUCH = 0x014A;
-		const int TOUCH_DOWN = 0x0001;
-		const int TOUCH_UP = 0x0000;
+		const short BTN_TOUCH = 0x014A;
+		const short TOUCH_DOWN = 0x0001;
+		const short TOUCH_UP = 0x0000;
 
-		const int ABS_MT_PRESSURE = 0x003A;
-		const int ABS_MT_POSITION_X = 0x0035;
-		const int ABS_MT_POSITION_Y = 0x0036;
-		const int SYN_MT_REPORT = 0x0002;
-		const int SYN_REPORT = 0x0000;
+		const short ABS_MT_POSITION_X = 0x0035;
+		const short ABS_MT_POSITION_Y = 0x0036;
+		const short SYN_MT_REPORT = 0x0002;
+		const short SYN_REPORT = 0x0000;
 
 		bool m_isPreviousTouchDown;
 		Point? m_axisPosition;
 		bool[] m_isButtonDown = new bool[Constants.ButtonCount];
 		bool m_isDataDirty;
 		List<Point> m_dataBuffer = new List<Point>(10);
-		StringBuilder m_sendString = new StringBuilder();
+		BinaryWriter m_sendData = new BinaryWriter(new MemoryStream(1400));
 
 		void AxisDown(Point point)
 		{
@@ -168,8 +168,12 @@ namespace Xbox2Android
 					}
 				}
 
-				m_sendString.Clear();
-				Action<int, int, int> fnFormatString = (eventType, inputType, param) => m_sendString.AppendFormat("{0} {1} {2}\n", eventType, inputType, param);
+				m_sendData.BaseStream.Position = 0;
+				Action<short, short, short> fnFormatString = (eventType, inputType, param) => {
+					m_sendData.Write(eventType);
+					m_sendData.Write(inputType);
+					m_sendData.Write(param);
+				};
 
 				if (m_dataBuffer.Count > 0) {
 					if (!m_isPreviousTouchDown) {
@@ -177,8 +181,8 @@ namespace Xbox2Android
 						m_isPreviousTouchDown = true;
 					}
 					foreach (var point in m_dataBuffer) {
-						int x = (int)Math.Round(point.X);
-						int y = (int)Math.Round(point.Y);
+						short x = (short)Math.Round(point.X);
+						short y = (short)Math.Round(point.Y);
 						fnFormatString(EV_ABS, ABS_MT_POSITION_X, x);
 						fnFormatString(EV_ABS, ABS_MT_POSITION_Y, y);
 						fnFormatString(EV_SYN, SYN_MT_REPORT, 0);
@@ -197,7 +201,9 @@ namespace Xbox2Android
 				}
 
 				var selectedItem = (ComboBoxItem)comboDevices.SelectedItem;
-				SendString((ClientParam)selectedItem.Tag, m_sendString.ToString());
+				var data = new byte[m_sendData.BaseStream.Position];
+				Array.Copy(((MemoryStream)m_sendData.BaseStream).GetBuffer(), data, data.Length);
+				SendData((ClientParam)selectedItem.Tag, data);
 				m_isDataDirty = false;
 			}
 		}
