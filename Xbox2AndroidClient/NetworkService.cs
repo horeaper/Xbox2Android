@@ -6,6 +6,7 @@ using System.Text;
 using Android.App;
 using Android.Content;
 using Android.OS;
+using Android.Widget;
 using Java.IO;
 
 namespace Xbox2AndroidClient
@@ -18,8 +19,6 @@ namespace Xbox2AndroidClient
 		Handler m_handler = new Handler(Looper.MainLooper);
 		Socket m_socket;
 		byte[] m_buffer = new byte[1400];
-		Java.Lang.Process m_proc;
-		DataOutputStream m_output;
 
 		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId) => StartCommandResult.Sticky;
 		public override IBinder OnBind(Intent intent) => null;
@@ -29,18 +28,30 @@ namespace Xbox2AndroidClient
 			base.OnCreate();
 			IsRunning = true;
 
+			InitTouchInjector();
 			m_socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
 			m_socket.BeginConnect(MainActivity.IP, MainActivity.ServerPort, ServerConnectedCallback, m_socket);
-			m_proc = Java.Lang.Runtime.GetRuntime().Exec("su");
-			m_output = new DataOutputStream(m_proc.OutputStream);
+
+			if (!OpenTouchDevice(MainActivity.InputEvent)) {
+				var proc = Java.Lang.Runtime.GetRuntime().Exec("su");
+				var output = new DataOutputStream(proc.OutputStream);
+				output.WriteBytes($"chmod 666 {MainActivity.InputEvent}\n");
+				output.Flush();
+				output.WriteBytes("exit\n");
+				output.Flush();
+				proc.WaitFor();
+				if (!OpenTouchDevice(MainActivity.InputEvent)) {
+					Toast.MakeText(this, "Unable to open input event ¨r(¨s¨Œ¨t)¨q\nPlease make sure the device is rooted.", ToastLength.Long).Show();
+					StopSelf();
+				}
+			}
 		}
 
 		public override void OnDestroy()
 		{
 			m_socket.Dispose();
 			m_socket = null;
-			m_output.WriteBytes("exit\n");
-			m_output.Flush();
+			CloseTouchInjector();
 			IsRunning = false;
 			if (MainActivity.Instance != null) {
 				MainActivity.Instance.SetServiceRunning(false);
@@ -121,10 +132,21 @@ namespace Xbox2AndroidClient
 			}
 
 			if (m_pendingEvents.Count > 0) {
-				//TODO: Inject
-
+				InjectTouchEvent(m_pendingEvents.ToArray(), m_pendingEvents.Count);
 				m_pendingEvents.Clear();
 			}
 		}
+
+		[DllImport("TouchInjector", EntryPoint = "TouchInjector_Init")]
+		static extern void InitTouchInjector();
+
+		[DllImport("TouchInjector", EntryPoint = "TouchInjector_OpenDevice")]
+		static extern bool OpenTouchDevice([MarshalAs(UnmanagedType.LPStr)] string deviceName);
+
+		[DllImport("TouchInjector", EntryPoint = "TouchInjector_Close")]
+		static extern void CloseTouchInjector();
+
+		[DllImport("TouchInjector", EntryPoint = "TouchInjector_InjectEvent")]
+		static extern void InjectTouchEvent([MarshalAs(UnmanagedType.LPArray)] InputEvent[] inputEvents, int count);
 	}
 }
