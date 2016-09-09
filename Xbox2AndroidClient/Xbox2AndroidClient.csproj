@@ -80,6 +80,8 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
+    <AndroidNativeLibrary Include="lib\armeabi-v7a\libTouchInjector.so" />
+    <AndroidNativeLibrary Include="lib\x86\libTouchInjector.so" />
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -96,14 +98,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-xhdpi\ic_launcher.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Xbox2AndroidClientLibrary\Xbox2AndroidClientLibrary.vcxproj">
-      <Project>{3529dfbf-2a44-436f-96b4-d03f8705c57c}</Project>
-      <Name>Xbox2AndroidClientLibrary</Name>
-      <TargetPlatformIdentifier>Android</TargetPlatformIdentifier>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
