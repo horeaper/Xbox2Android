@@ -34,9 +34,11 @@ namespace Xbox2Android
 				ShadowAxisOffset = int.Parse(rootElement.Attribute("ShadowAxisOffset").Value);
 				BackgroundImage = rootElement.Attribute("BackgroundImage").Value;
 
+				for (int cnt = 0; cnt < Constants.ButtonCount; ++cnt) {
+					ButtonPositions[cnt] = new List<Point>();
+				}
 				int index = 0;
 				foreach (var buttonElement in rootElement.Elements("Button")) {
-					ButtonPositions[index] = new List<Point>();
 					foreach (var pointElement in buttonElement.Elements("Point")) {
 						var point = Point.Parse(pointElement.Attribute("Value").Value);
 						ButtonPositions[index].Add(point);

@@ -157,54 +157,56 @@ namespace Xbox2Android
 
 		void SendTouchData()
 		{
-			if (m_isDataDirty && comboDevices.SelectedItem != null) {
-				m_dataBuffer.Clear();
-				if (m_axisPosition.HasValue) {
-					m_dataBuffer.Add(m_axisPosition.Value);
-				}
-				for (int cnt = 0; cnt < Constants.ButtonCount; ++cnt) {
-					if (m_isButtonDown[cnt]) {
-						m_dataBuffer.AddRange(ProgramSettings.ButtonPositions[cnt]);
+			if (comboDevices.SelectedItem != null) {
+				if (m_isDataDirty) {
+					m_dataBuffer.Clear();
+					if (m_axisPosition.HasValue) {
+						m_dataBuffer.Add(m_axisPosition.Value);
 					}
-				}
+					for (int cnt = 0; cnt < Constants.ButtonCount; ++cnt) {
+						if (m_isButtonDown[cnt]) {
+							m_dataBuffer.AddRange(ProgramSettings.ButtonPositions[cnt]);
+						}
+					}
 
-				m_sendData.BaseStream.Position = 0;
-				Action<short, short, short> fnFormatString = (eventType, inputType, param) => {
-					m_sendData.Write(eventType);
-					m_sendData.Write(inputType);
-					m_sendData.Write(param);
-				};
+					m_sendData.BaseStream.Position = 0;
+					Action<short, short, short> fnFormatString = (eventType, inputType, param) => {
+						m_sendData.Write(eventType);
+						m_sendData.Write(inputType);
+						m_sendData.Write(param);
+					};
 
-				if (m_dataBuffer.Count > 0) {
-					if (!m_isPreviousTouchDown) {
-						fnFormatString(EV_KEY, BTN_TOUCH, TOUCH_DOWN);
-						m_isPreviousTouchDown = true;
+					if (m_dataBuffer.Count > 0) {
+						if (!m_isPreviousTouchDown) {
+							fnFormatString(EV_KEY, BTN_TOUCH, TOUCH_DOWN);
+							m_isPreviousTouchDown = true;
+						}
+						foreach (var point in m_dataBuffer) {
+							short x = (short)Math.Round(point.X);
+							short y = (short)Math.Round(point.Y);
+							fnFormatString(EV_ABS, ABS_MT_POSITION_X, x);
+							fnFormatString(EV_ABS, ABS_MT_POSITION_Y, y);
+							fnFormatString(EV_SYN, SYN_MT_REPORT, 0);
+						}
+						fnFormatString(EV_SYN, SYN_REPORT, 0);
 					}
-					foreach (var point in m_dataBuffer) {
-						short x = (short)Math.Round(point.X);
-						short y = (short)Math.Round(point.Y);
-						fnFormatString(EV_ABS, ABS_MT_POSITION_X, x);
-						fnFormatString(EV_ABS, ABS_MT_POSITION_Y, y);
-						fnFormatString(EV_SYN, SYN_MT_REPORT, 0);
-					}
-					fnFormatString(EV_SYN, SYN_REPORT, 0);
-				}
-				else {
-					fnFormatString(EV_SYN, SYN_MT_REPORT, 0);
-					fnFormatString(EV_SYN, SYN_REPORT, 0);
-					if (m_isPreviousTouchDown) {
-						fnFormatString(EV_KEY, BTN_TOUCH, TOUCH_UP);
+					else {
 						fnFormatString(EV_SYN, SYN_MT_REPORT, 0);
 						fnFormatString(EV_SYN, SYN_REPORT, 0);
-						m_isPreviousTouchDown = false;
+						if (m_isPreviousTouchDown) {
+							fnFormatString(EV_KEY, BTN_TOUCH, TOUCH_UP);
+							fnFormatString(EV_SYN, SYN_MT_REPORT, 0);
+							fnFormatString(EV_SYN, SYN_REPORT, 0);
+							m_isPreviousTouchDown = false;
+						}
 					}
-				}
 
-				var selectedItem = (ComboBoxItem)comboDevices.SelectedItem;
-				var data = new byte[m_sendData.BaseStream.Position];
-				Array.Copy(((MemoryStream)m_sendData.BaseStream).GetBuffer(), data, data.Length);
-				SendData((ClientParam)selectedItem.Tag, data);
-				m_isDataDirty = false;
+					var selectedItem = (ComboBoxItem)comboDevices.SelectedItem;
+					var data = new byte[m_sendData.BaseStream.Position];
+					Array.Copy(((MemoryStream)m_sendData.BaseStream).GetBuffer(), data, data.Length);
+					SendData((ClientParam)selectedItem.Tag, data);
+					m_isDataDirty = false;
+				}
 			}
 		}
 	}

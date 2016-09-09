@@ -59,6 +59,7 @@ namespace Xbox2Android
 
 			m_iconMenu.MenuItems.Add(new MenuItem("-"));
 
+/*
 			m_iconMenu.MenuItems.Add(new MenuItem("Trigger Mode") { Enabled = false });
 			foreach (ComboBoxItem item in comboTriggerMode.Items) {
 				var menuItem = new MenuItem(item.Content.ToString());
@@ -71,6 +72,7 @@ namespace Xbox2Android
 			}
 
 			m_iconMenu.MenuItems.Add(new MenuItem("-"));
+*/
 
 			m_menuReverseAxis.Checked = ProgramSettings.IsReverseAxis;
 			m_iconMenu.MenuItems.AddRange(new[] { m_menuReverseAxis, new MenuItem("-"), m_menuExit });
