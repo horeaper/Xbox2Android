@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -10,7 +11,7 @@ namespace Xbox2Android
 {
 	partial class MainWindow
 	{
-		const int ThumbDeadzone = short.MaxValue / 4;
+		const double ThumbDeadzone = short.MaxValue / 2.0;
 		const int TriggerDeadzone = byte.MaxValue / 2;
 		XInput.Gamepad m_previousGamepad;
 		bool m_isDirectionInEffect;
@@ -29,11 +30,17 @@ namespace Xbox2Android
 				//Axis
 				if (ProgramSettings.AxisCenter.HasValue && ProgramSettings.AxisRadius > 0) {
 					var direction = new Vector(state.Gamepad.ThumbLX, state.Gamepad.ThumbLY);
-					if (Math.Abs(direction.X) <= ThumbDeadzone) {
+					if (direction.Length <= ThumbDeadzone) {
 						direction.X = 0;
-					}
-					if (Math.Abs(direction.Y) <= ThumbDeadzone) {
 						direction.Y = 0;
+					}
+					if (ProgramSettings.IsSnapAxis) {
+						if (Math.Abs(direction.X) <= short.MaxValue / 3.0) {
+							direction.X = 0;
+						}
+						if (Math.Abs(direction.Y) <= short.MaxValue / 3.0) {
+							direction.Y = 0;
+						}
 					}
 					if (direction.X == 0 && direction.Y == 0) {    //No direction
 						if (m_isDirectionInEffect) {
@@ -42,6 +49,43 @@ namespace Xbox2Android
 						}
 					}
 					else {
+						//8-axis
+						if (ProgramSettings.Is8Axis) {
+							var angle = Math.Abs(Math.Atan(direction.Y / direction.X) * (180 / Math.PI));
+							if (angle > 0 && angle <= 22.5) {
+								angle = 0;
+							}
+							else if (angle >= 22.5 && angle <= 67.5) {
+								angle = 45;
+							}
+							else if (angle >= 45 + 22.5 && angle < 90) {
+								angle = 90;
+							}
+							if (direction.X > 0) {
+								if (angle == 0) {
+									direction = new Vector(1, 0);
+								}
+								else if (angle == 45) {
+									direction = direction.Y > 0 ? new Vector(1, 1) : new Vector(1, -1);
+								}
+								else if (angle == 90) {
+									direction = direction.Y > 0 ? new Vector(0, 1) : new Vector(0, -1);
+								}
+							}
+							else {
+								if (angle == 0) {
+									direction = new Vector(-1, 0);
+								}
+								else if (angle == 45) {
+									direction = direction.Y > 0 ? new Vector(-1, 1) : new Vector(-1, -1);
+								}
+								else if (angle == 90) {
+									direction = direction.Y > 0 ? new Vector(0, 1) : new Vector(0, -1);
+								}
+							}
+						}
+
+						//Normalize
 						direction.Normalize();
 						direction *= ProgramSettings.AxisRadius;
 
@@ -95,7 +139,7 @@ namespace Xbox2Android
 				}
 
 				m_previousGamepad = gamepad;
-				SendTouchData();
+				OnTimerTick();
 			}
 			else {
 				ResetGamepadState();
@@ -155,7 +199,7 @@ namespace Xbox2Android
 			m_isButtonDown[index] = false;
 		}
 
-		void SendTouchData()
+		void OnTimerTick()
 		{
 			if (comboDevices.SelectedItem != null) {
 				if (m_isDataDirty) {

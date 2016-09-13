@@ -4,7 +4,7 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		mc:Ignorable="d"
-		Title="Xbox 2 Android" Width="250" Height="240" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" FontFamily="Segoe UI" FontSize="12" Icon="Program.ico"
+		Title="Xbox 2 Android" Width="250" Height="285" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" FontFamily="Segoe UI" FontSize="12" Icon="Program.ico"
 		Loaded="MainWindow_Loaded" Closing="MainWindow_Closing" StateChanged="MainWindow_StateChanged">
 	<Grid>
 		<Grid.RowDefinitions>
@@ -45,7 +45,11 @@
 				</ComboBox>
 			</Grid>
 
-			<CheckBox x:Name="checkReverseAxis" HorizontalAlignment="Left" Margin="10,5,0,5" Content="Reverse Axis" Checked="checkReverseAxis_CheckedChanged" Unchecked="checkReverseAxis_CheckedChanged"/>
+			<StackPanel Orientation="Vertical" Margin="10,0,10,0">
+				<CheckBox x:Name="checkReverseAxis" HorizontalAlignment="Left" Margin="0,5,0,5" Content="Reverse Axis" Checked="checkReverseAxis_CheckedChanged" Unchecked="checkReverseAxis_CheckedChanged"/>
+				<CheckBox x:Name="check8Axis" HorizontalAlignment="Left" Margin="0,5,0,5" Content="8-Axis" Checked="check8Axis_CheckedChanged" Unchecked="check8Axis_CheckedChanged"/>
+				<CheckBox x:Name="checkSnapAxis" HorizontalAlignment="Left" Margin="0,5,0,5" Content="Snap Axis" Checked="checkContinuousStream_CheckedChanged" Unchecked="checkContinuousStream_CheckedChanged"/>
+			</StackPanel>
 		</StackPanel>
 
 		<Button Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" Width="120" Height="23" Content="Touch Profile" Click="btnTouchProfile_Click"/>

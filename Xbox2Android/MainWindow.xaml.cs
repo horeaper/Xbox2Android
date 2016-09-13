@@ -19,6 +19,9 @@ namespace Xbox2Android
 
 			ProgramSettings.Load();
 			comboTriggerMode.SelectedIndex = ProgramSettings.TriggerMode;
+			checkReverseAxis.IsChecked = ProgramSettings.IsReverseAxis;
+			check8Axis.IsChecked = ProgramSettings.Is8Axis;
+			checkSnapAxis.IsChecked = ProgramSettings.IsSnapAxis;
 			CreateNotifyIcon();
 			StartServer();
 		}
@@ -70,6 +73,16 @@ tagRetry:
 		private void checkReverseAxis_CheckedChanged(object sender, RoutedEventArgs e)
 		{
 			ProgramSettings.IsReverseAxis = checkReverseAxis.IsChecked == true;
+		}
+
+		private void check8Axis_CheckedChanged(object sender, RoutedEventArgs e)
+		{
+			ProgramSettings.Is8Axis = check8Axis.IsChecked == true;
+		}
+
+		private void checkContinuousStream_CheckedChanged(object sender, RoutedEventArgs e)
+		{
+			ProgramSettings.IsSnapAxis = checkSnapAxis.IsChecked == true;
 		}
 
 		private void btnTouchProfile_Click(object sender, RoutedEventArgs e)

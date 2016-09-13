@@ -10,6 +10,8 @@ namespace Xbox2Android
 
 		public static int TriggerMode;
 		public static bool IsReverseAxis;
+		public static bool Is8Axis;
+		public static bool IsSnapAxis;
 
 		public static Point? AxisCenter;
 		public static int AxisRadius = 120;
@@ -25,8 +27,18 @@ namespace Xbox2Android
 				var rootElement = doc.Root;
 
 				IsMinimized = bool.Parse(rootElement.Attribute("IsMinimized").Value);
+
 				TriggerMode = int.Parse(rootElement.Attribute("TriggerMode").Value);
-				IsReverseAxis = bool.Parse(rootElement.Attribute("IsReverseAxis").Value);
+				if (rootElement.Attribute("IsReverseAxis") != null) {
+					IsReverseAxis = bool.Parse(rootElement.Attribute("IsReverseAxis").Value);
+				}
+				if (rootElement.Attribute("Is8Axis") != null) {
+					Is8Axis = bool.Parse(rootElement.Attribute("Is8Axis").Value);
+				}
+				if (rootElement.Attribute("IsSnapAxis") != null) {
+					IsSnapAxis = bool.Parse(rootElement.Attribute("IsSnapAxis").Value);
+				}
+
 				if (rootElement.Attribute("AxisCenter") != null) {
 					AxisCenter = Point.Parse(rootElement.Attribute("AxisCenter").Value);
 				}
@@ -58,6 +70,8 @@ namespace Xbox2Android
 				rootElement.SetAttributeValue("IsMinimized", IsMinimized);
 				rootElement.SetAttributeValue("TriggerMode", TriggerMode);
 				rootElement.SetAttributeValue("IsReverseAxis", IsReverseAxis);
+				rootElement.SetAttributeValue("Is8Axis", Is8Axis);
+				rootElement.SetAttributeValue("IsSnapAxis", IsSnapAxis);
 				if (AxisCenter.HasValue) {
 					rootElement.SetAttributeValue("AxisCenter", AxisCenter.Value);
 				}
