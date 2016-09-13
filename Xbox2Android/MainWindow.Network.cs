@@ -46,6 +46,9 @@ namespace Xbox2Android
 				foreach (ComboBoxItem item in comboDevices.Items) {
 					if (ReferenceEquals(item.Tag, client)) {
 						comboDevices.Items.Remove(item);
+						if (comboDevices.SelectedIndex == -1 && comboDevices.Items.Count > 0) {
+							comboDevices.SelectedIndex = 0;
+						}
 						return;
 					}
 				}

@@ -46,7 +46,7 @@ namespace Xbox2Android
 		{
 			m_iconMenu.MenuItems.Clear();
 
-			m_iconMenu.MenuItems.Add(new MenuItem("Connected") { Enabled = false });
+			m_iconMenu.MenuItems.Add(new MenuItem("Client") { Enabled = false });
 			foreach (ComboBoxItem item in comboDevices.Items) {
 				var menuItem = new MenuItem(item.Content.ToString());
 				menuItem.Click += MenuDeviceSelect_Click;

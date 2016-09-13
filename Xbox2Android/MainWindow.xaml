@@ -29,7 +29,7 @@
 					<ListBox x:Name="listLocalIPs" Height="43" />
 				</StackPanel>
 
-				<TextBlock Text="Connected" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Right" />
+				<TextBlock Text="Client" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Right" />
 				<ComboBox x:Name="comboDevices" Grid.Column="1" Grid.Row="1" Margin="5,5,0,5" Height="23" SelectionChanged="comboDevices_SelectionChanged" />
 
 				<TextBlock Text="Trigger Mode" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="Hidden" />
@@ -39,6 +39,8 @@
 						<ComboBoxItem Content="Double Harmony Shock!!" />
 						<ComboBoxItem Content="Triple Triplet" />
 						<ComboBoxItem Content="Triple Triplet Frenzy!!" />
+						<ComboBoxItem Content="Trigger Happy A" />
+						<ComboBoxItem Content="Trigger Happy B" />
 					</ComboBox.Items>
 				</ComboBox>
 			</Grid>
