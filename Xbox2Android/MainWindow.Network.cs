@@ -42,11 +42,11 @@ namespace Xbox2Android
 			m_clients.Remove(client);
 
 			Dispatcher.Invoke(() => {
-				foreach (ComboBoxItem item in comboDevices.Items) {
+				foreach (ComboBoxItem item in comboClients.Items) {
 					if (ReferenceEquals(item.Tag, client)) {
-						comboDevices.Items.Remove(item);
-						if (comboDevices.SelectedIndex == -1 && comboDevices.Items.Count > 0) {
-							comboDevices.SelectedIndex = 0;
+						comboClients.Items.Remove(item);
+						if (comboClients.SelectedIndex == -1 && comboClients.Items.Count > 0) {
+							comboClients.SelectedIndex = 0;
 						}
 						return;
 					}
@@ -99,12 +99,12 @@ namespace Xbox2Android
 
 			m_clients.Add(client);
 			Dispatcher.Invoke(() => {
-				comboDevices.Items.Add(new ComboBoxItem {
+				comboClients.Items.Add(new ComboBoxItem {
 					Content = Encoding.UTF8.GetString(client.Buffer, 0, bytesReceived),
 					Tag = client,
 				});
-				if (comboDevices.SelectedIndex == -1) {
-					comboDevices.SelectedIndex = 0;
+				if (comboClients.SelectedIndex == -1) {
+					comboClients.SelectedIndex = 0;
 				}
 			});
 

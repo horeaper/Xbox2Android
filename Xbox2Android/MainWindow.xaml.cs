@@ -1,17 +1,23 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
 
 namespace Xbox2Android
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	partial class MainWindow : Window
+	sealed partial class MainWindow : Window
 	{
-		readonly DispatcherTimer m_timer = new DispatcherTimer();
+		[DllImport("Kernel32.dll", CallingConvention = CallingConvention.StdCall, SetLastError = true)]
+		static extern bool QueryPerformanceFrequency(out long frequency);
+		[DllImport("Kernel32.dll", CallingConvention = CallingConvention.StdCall, SetLastError = true)]
+		static extern bool QueryPerformanceCounter(out long counter);
+
+		ThreadTimer m_timer;
+		ClientParam m_selectedClient;
 
 		public MainWindow()
 		{
@@ -28,10 +34,7 @@ namespace Xbox2Android
 
 		private void MainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			m_timer.Tick += timer_Tick;
-			m_timer.Interval = TimeSpan.FromSeconds(1.0 / 60.0);
-			m_timer.Start();
-
+			m_timer = new ThreadTimer(Timer_Tick, 1 / 30.0f);
 			WindowState = ProgramSettings.IsMinimized ? WindowState.Minimized : WindowState.Normal;
 			MainWindow_StateChanged(null, null);
 		}
@@ -61,13 +64,15 @@ tagRetry:
 			}
 		}
 
-		private void comboDevices_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void comboClients_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
+			m_selectedClient = (ClientParam)((ComboBoxItem)comboClients.SelectedItem)?.Tag;
 		}
 
 		private void comboTriggerMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			ProgramSettings.TriggerMode = comboTriggerMode.SelectedIndex;
+			m_timer?.Change(TriggerAction.ActionInterval[ProgramSettings.TriggerMode]);
 		}
 
 		private void checkReverseAxis_CheckedChanged(object sender, RoutedEventArgs e)

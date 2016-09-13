@@ -15,7 +15,7 @@ namespace Xbox2Android
 	/// <summary>
 	/// Interaction logic for TouchProfileWindow.xaml
 	/// </summary>
-	public partial class TouchProfileWindow : Window
+	sealed partial class TouchProfileWindow : Window
 	{
 		AxisControl m_axisControl;
 		List<ButtonControl>[] m_buttonControls = new List<ButtonControl>[Constants.ButtonCount];

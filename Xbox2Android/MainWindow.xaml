@@ -30,17 +30,19 @@
 				</StackPanel>
 
 				<TextBlock Text="Client" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Right" />
-				<ComboBox x:Name="comboDevices" Grid.Column="1" Grid.Row="1" Margin="5,5,0,5" Height="23" SelectionChanged="comboDevices_SelectionChanged" />
+				<ComboBox x:Name="comboClients" Grid.Column="1" Grid.Row="1" Margin="5,5,0,5" Height="23" SelectionChanged="comboClients_SelectionChanged" />
 
-				<TextBlock Text="Trigger Mode" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Right" Visibility="Hidden" />
-				<ComboBox x:Name="comboTriggerMode" Grid.Column="1" Grid.Row="2" Margin="5,5,0,5" Height="23" SelectionChanged="comboTriggerMode_SelectionChanged" Visibility="Hidden">
+				<TextBlock Text="R-Trigger" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Right" />
+				<ComboBox x:Name="comboTriggerMode" Grid.Column="1" Grid.Row="2" Margin="5,5,0,5" Height="23" SelectionChanged="comboTriggerMode_SelectionChanged">
 					<ComboBox.Items>
 						<ComboBoxItem Content="Double Harmony" />
 						<ComboBoxItem Content="Double Harmony Shock!!" />
 						<ComboBoxItem Content="Triple Triplet" />
 						<ComboBoxItem Content="Triple Triplet Frenzy!!" />
 						<ComboBoxItem Content="Trigger Happy A" />
+						<ComboBoxItem Content="Trigger Happy Madness A" />
 						<ComboBoxItem Content="Trigger Happy B" />
+						<ComboBoxItem Content="Trigger Happy Madness B" />
 					</ComboBox.Items>
 				</ComboBox>
 			</Grid>

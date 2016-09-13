@@ -53,20 +53,18 @@ namespace Xbox2Android
 			m_iconMenu.MenuItems.Clear();
 
 			m_iconMenu.MenuItems.Add(new MenuItem("Client") { Enabled = false });
-			foreach (ComboBoxItem item in comboDevices.Items) {
+			foreach (ComboBoxItem item in comboClients.Items) {
 				var menuItem = new MenuItem(item.Content.ToString());
 				menuItem.Click += MenuDeviceSelect_Click;
 				menuItem.Tag = item;
 				m_iconMenu.MenuItems.Add(menuItem);
-				if (ReferenceEquals(item, comboDevices.SelectedItem)) {
+				if (ReferenceEquals(item, comboClients.SelectedItem)) {
 					menuItem.Checked = true;
 				}
 			}
-
 			m_iconMenu.MenuItems.Add(new MenuItem("-"));
 
-/*
-			m_iconMenu.MenuItems.Add(new MenuItem("Trigger Mode") { Enabled = false });
+			m_iconMenu.MenuItems.Add(new MenuItem("R-Trigger") { Enabled = false });
 			foreach (ComboBoxItem item in comboTriggerMode.Items) {
 				var menuItem = new MenuItem(item.Content.ToString());
 				menuItem.Click += MenuTriggerMode_Click;
@@ -76,9 +74,7 @@ namespace Xbox2Android
 					menuItem.Checked = true;
 				}
 			}
-
 			m_iconMenu.MenuItems.Add(new MenuItem("-"));
-*/
 
 			m_menuReverseAxis.Checked = ProgramSettings.IsReverseAxis;
 			m_menuSnapAxis.Checked = ProgramSettings.IsSnapAxis;
@@ -88,7 +84,7 @@ namespace Xbox2Android
 
 		private void MenuDeviceSelect_Click(object sender, EventArgs e)
 		{
-			comboDevices.SelectedItem = ((MenuItem)sender).Tag;
+			comboClients.SelectedItem = ((MenuItem)sender).Tag;
 		}
 
 		private void MenuTriggerMode_Click(object sender, EventArgs e)

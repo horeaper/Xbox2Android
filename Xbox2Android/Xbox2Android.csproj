@@ -71,13 +71,16 @@
     </Compile>
     <Compile Include="Controls\IDisplayControl.cs" />
     <Compile Include="MainWindow.Icon.cs" />
-    <Compile Include="MainWindow.Input.cs" />
+    <Compile Include="MainWindow.GamePad.cs" />
+    <Compile Include="InputMapper.cs" />
     <Compile Include="MainWindow.Network.cs" />
     <Compile Include="Native\XInput.cs" />
     <Compile Include="ProgramSettings.cs" />
+    <Compile Include="ThreadTimer.cs" />
     <Compile Include="TouchProfileWindow.xaml.cs">
       <DependentUpon>TouchProfileWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TriggerAction.cs" />
     <Page Include="Controls\AxisControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
