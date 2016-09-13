@@ -13,12 +13,18 @@ namespace Xbox2Android
 		ContextMenu m_iconMenu;
 
 		MenuItem m_menuReverseAxis;
+		MenuItem m_menuSnapAxis;
+		MenuItem m_menu8Axis;
 		MenuItem m_menuExit;
 
 		void CreateNotifyIcon()
 		{
 			m_menuReverseAxis = new MenuItem("Reverse Axis");
 			m_menuReverseAxis.Click += MenuReverseAxis_Click;
+			m_menuSnapAxis = new MenuItem("Snap Axis");
+			m_menuSnapAxis.Click += MenuSnapAxis_Click;
+			m_menu8Axis = new MenuItem("8-Axis");
+			m_menu8Axis.Click += Menu8Axis_Click;
 			m_menuExit = new MenuItem("Exit");
 			m_menuExit.Click += MenuExit_Click;
 
@@ -75,7 +81,9 @@ namespace Xbox2Android
 */
 
 			m_menuReverseAxis.Checked = ProgramSettings.IsReverseAxis;
-			m_iconMenu.MenuItems.AddRange(new[] { m_menuReverseAxis, new MenuItem("-"), m_menuExit });
+			m_menuSnapAxis.Checked = ProgramSettings.IsSnapAxis;
+			m_menu8Axis.Checked = ProgramSettings.Is8Axis;
+			m_iconMenu.MenuItems.AddRange(new[] { m_menuReverseAxis, m_menuSnapAxis, m_menu8Axis, new MenuItem("-"), m_menuExit });
 		}
 
 		private void MenuDeviceSelect_Click(object sender, EventArgs e)
@@ -91,6 +99,16 @@ namespace Xbox2Android
 		private void MenuReverseAxis_Click(object sender, EventArgs e)
 		{
 			checkReverseAxis.IsChecked = !ProgramSettings.IsReverseAxis;
+		}
+
+		private void MenuSnapAxis_Click(object sender, EventArgs e)
+		{
+			checkSnapAxis.IsChecked = !ProgramSettings.IsSnapAxis;
+		}
+
+		private void Menu8Axis_Click(object sender, EventArgs e)
+		{
+			check8Axis.IsChecked = !ProgramSettings.Is8Axis;
 		}
 
 		private void MenuExit_Click(object sender, EventArgs e)

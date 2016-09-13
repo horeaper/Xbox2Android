@@ -75,14 +75,14 @@ tagRetry:
 			ProgramSettings.IsReverseAxis = checkReverseAxis.IsChecked == true;
 		}
 
+		private void checkSnapAxis_CheckedChanged(object sender, RoutedEventArgs e)
+		{
+			ProgramSettings.IsSnapAxis = checkSnapAxis.IsChecked == true;
+		}
+
 		private void check8Axis_CheckedChanged(object sender, RoutedEventArgs e)
 		{
 			ProgramSettings.Is8Axis = check8Axis.IsChecked == true;
-		}
-
-		private void checkContinuousStream_CheckedChanged(object sender, RoutedEventArgs e)
-		{
-			ProgramSettings.IsSnapAxis = checkSnapAxis.IsChecked == true;
 		}
 
 		private void btnTouchProfile_Click(object sender, RoutedEventArgs e)
