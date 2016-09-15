@@ -120,7 +120,7 @@ namespace Xbox2Android
 			new ActionButtonClick(XInput.GamePadButton.A),
 			new ActionWait(6),
 			new ActionButtonClick(XInput.GamePadButton.B),
-			new ActionWait(6),
+			new ActionWait(7),
 		};
 
 		static readonly ITriggerAction[] DoubleHarmonyShock = {
