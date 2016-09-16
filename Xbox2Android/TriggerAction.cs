@@ -17,28 +17,30 @@ namespace Xbox2Android
 		sealed class ActionButtonClick : ITriggerAction
 		{
 			readonly XInput.GamePadButton m_button;
+			readonly int m_holdFrame;
 			int m_frame;
 
-			public ActionButtonClick(XInput.GamePadButton button)
+			public ActionButtonClick(XInput.GamePadButton button, int holdFrame = 1)
 			{
 				m_button = button;
+				m_holdFrame = holdFrame;
 			}
 
 			public bool OnFrameUpdate()
 			{
-				switch (m_frame) {
-					case 0:
-						InputMapper.ButtonDown(m_button);
-						++m_frame;
-						return false;
-					case 1:
-						++m_frame;
-						return false;
-					case 2:
-					default:
-						InputMapper.ButtonUp(m_button);
-						m_frame = 0;
-						return true;
+				if (m_frame == 0) {
+					InputMapper.ButtonDown(m_button);
+					++m_frame;
+					return false;
+				}
+				else if (m_frame < m_holdFrame + 1) {
+					++m_frame;
+					return false;
+				}
+				else {
+					InputMapper.ButtonUp(m_button);
+					m_frame = 0;
+					return true;
 				}
 			}
 
@@ -51,53 +53,20 @@ namespace Xbox2Android
 			}
 		}
 
-		sealed class ActionButtonClickFast : ITriggerAction
-		{
-			readonly XInput.GamePadButton m_button;
-			bool m_isButtonDown;
-
-			public ActionButtonClickFast(XInput.GamePadButton button)
-			{
-				m_button = button;
-			}
-
-			public bool OnFrameUpdate()
-			{
-				if (!m_isButtonDown) {
-					InputMapper.ButtonDown(m_button);
-					m_isButtonDown = true;
-					return false;
-				}
-				else {
-					InputMapper.ButtonUp(m_button);
-					m_isButtonDown = false;
-					return true;
-				}
-			}
-
-			public void OnCancel()
-			{
-				if (m_isButtonDown) {
-					InputMapper.ButtonUp(m_button);
-					m_isButtonDown = false;
-				}
-			}
-		}
-
 		sealed class ActionWait : ITriggerAction
 		{
-			public int FrameCount { get; }
+			readonly int m_frameCount;
 			int m_frame;
 
 			public ActionWait(int frame)
 			{
-				FrameCount = frame;
+				m_frameCount = frame;
 			}
 
 			public bool OnFrameUpdate()
 			{
 				++m_frame;
-				if (m_frame >= FrameCount) {
+				if (m_frame >= m_frameCount) {
 					m_frame = 0;
 					return true;
 				}
@@ -109,6 +78,34 @@ namespace Xbox2Android
 			public void OnCancel()
 			{
 				m_frame = 0;
+			}
+		}
+
+		sealed class ActionSlide : ITriggerAction
+		{
+			readonly XInput.GamePadButton[] m_buttonSequence;
+			int m_currentIndex;
+
+			public ActionSlide(params XInput.GamePadButton[] buttonSequence)
+			{
+				m_buttonSequence = buttonSequence;
+			}
+
+			public bool OnFrameUpdate()
+			{
+				InputMapper.ButtonDown(m_buttonSequence[m_currentIndex]);
+				int previousIndex = m_currentIndex > 0 ? m_currentIndex - 1 : m_buttonSequence.Length - 1;
+				InputMapper.ButtonUp(m_buttonSequence[previousIndex]);
+				++m_currentIndex;
+				m_currentIndex %= m_buttonSequence.Length;
+				return true;
+			}
+
+			public void OnCancel()
+			{
+				int previousIndex = m_currentIndex > 0 ? m_currentIndex - 1 : m_buttonSequence.Length - 1;
+				InputMapper.ButtonUp(m_buttonSequence[previousIndex]);
+				m_currentIndex = 0;
 			}
 		}
 
@@ -130,6 +127,10 @@ namespace Xbox2Android
 			new ActionWait(1),
 		};
 
+		static readonly ITriggerAction[] DoubleHarmonyMadness = {
+			new ActionSlide(XInput.GamePadButton.A, XInput.GamePadButton.B),
+		};
+
 		static readonly ITriggerAction[] TripleTriplet = {
 			new ActionButtonClick(XInput.GamePadButton.Y),
 			new ActionWait(4),
@@ -148,34 +149,42 @@ namespace Xbox2Android
 			new ActionWait(1),
 		};
 
-		static readonly ITriggerAction[] TriggerHappyA = {
-			new ActionButtonClickFast(XInput.GamePadButton.A),
+		static readonly ITriggerAction[] TripleTripletMadness = {
+			new ActionSlide(XInput.GamePadButton.Y, XInput.GamePadButton.B, XInput.GamePadButton.A),
 		};
 
-		static readonly ITriggerAction[] TriggerHappyFrenzyA = {
-			new ActionButtonClickFast(XInput.GamePadButton.A),
+		static readonly ITriggerAction[] TriggerHappyA = {
+			new ActionButtonClick(XInput.GamePadButton.A, 0),
+		};
+
+		static readonly ITriggerAction[] TriggerHappyMadnessA = {
+			new ActionButtonClick(XInput.GamePadButton.A, 0),
 		};
 
 		static readonly ITriggerAction[] TriggerHappyB = {
-			new ActionButtonClickFast(XInput.GamePadButton.B),
+			new ActionButtonClick(XInput.GamePadButton.B, 0),
 		};
 
-		static readonly ITriggerAction[] TriggerFrenzyB = {
-			new ActionButtonClickFast(XInput.GamePadButton.B),
+		static readonly ITriggerAction[] TriggerMadnessB = {
+			new ActionButtonClick(XInput.GamePadButton.B, 0),
 		};
 
 		static readonly ITriggerAction[][] Actions = {
 			DoubleHarmony,
 			DoubleHarmonyShock,
+			DoubleHarmonyMadness,
 			TripleTriplet,
 			TripleTripletFrenzy,
+			TripleTripletMadness,
 			TriggerHappyA,
-			TriggerHappyFrenzyA,
+			TriggerHappyMadnessA,
 			TriggerHappyB,
-			TriggerFrenzyB,
+			TriggerMadnessB,
 		};
 
 		public static readonly float[] ActionInterval = {
+			1 / 30.0f,
+			1 / 30.0f,
 			1 / 30.0f,
 			1 / 30.0f,
 			1 / 30.0f,

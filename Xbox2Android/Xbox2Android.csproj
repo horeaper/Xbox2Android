@@ -71,7 +71,7 @@
     </Compile>
     <Compile Include="Controls\IDisplayControl.cs" />
     <Compile Include="MainWindow.Icon.cs" />
-    <Compile Include="MainWindow.GamePad.cs" />
+    <Compile Include="MainWindow.Timer.cs" />
     <Compile Include="InputMapper.cs" />
     <Compile Include="MainWindow.Network.cs" />
     <Compile Include="Native\XInput.cs" />

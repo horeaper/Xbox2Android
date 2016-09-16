@@ -37,8 +37,10 @@
 					<ComboBox.Items>
 						<ComboBoxItem Content="Double Harmony" />
 						<ComboBoxItem Content="Double Harmony Shock!!" />
+						<ComboBoxItem Content="Double Harmony Madness" />
 						<ComboBoxItem Content="Triple Triplet" />
 						<ComboBoxItem Content="Triple Triplet Frenzy!!" />
+						<ComboBoxItem Content="Triple Triplet Madness" />
 						<ComboBoxItem Content="Trigger Happy A" />
 						<ComboBoxItem Content="Trigger Happy Madness A" />
 						<ComboBoxItem Content="Trigger Happy B" />

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
 using Xbox2Android.Native;
 
 namespace Xbox2Android
@@ -31,23 +30,26 @@ namespace Xbox2Android
 
 		public static void AxisDown(Point point)
 		{
-			m_isDataDirty = true;
-			m_axisPosition = point;
+			if (!m_axisPosition.HasValue) {
+				m_axisPosition = point;
+				m_isDataDirty = true;
+			}
 		}
 
 		public static void AxisUpdate(Point point)
 		{
-			if (m_axisPosition.HasValue && m_axisPosition.Value == point) {
-				return;
+			if (m_axisPosition == null || m_axisPosition.Value != point) {
+				m_axisPosition = point;
+				m_isDataDirty = true;
 			}
-			m_isDataDirty = true;
-			m_axisPosition = point;
 		}
 
 		public static void AxisUp()
 		{
-			m_isDataDirty = true;
-			m_axisPosition = null;
+			if (m_axisPosition != null) {
+				m_axisPosition = null;
+				m_isDataDirty = true;
+			}
 		}
 
 		public static void ButtonDown(XInput.GamePadButton button)
@@ -57,8 +59,10 @@ namespace Xbox2Android
 
 		public static void ButtonDown(int index)
 		{
-			m_isDataDirty = true;
-			m_isButtonDown[index] = true;
+			if (!m_isButtonDown[index]) {
+				m_isButtonDown[index] = true;
+				m_isDataDirty = true;
+			}
 		}
 
 		public static void ButtonUp(XInput.GamePadButton button)
@@ -68,8 +72,10 @@ namespace Xbox2Android
 
 		public static void ButtonUp(int index)
 		{
-			m_isDataDirty = true;
-			m_isButtonDown[index] = false;
+			if (m_isButtonDown[index]) {
+				m_isButtonDown[index] = false;
+				m_isDataDirty = true;
+			}
 		}
 
 		public static void FrameUpdate(MainWindow.ClientParam selectedClient, Action<MainWindow.ClientParam, byte[]> fnSendData)
