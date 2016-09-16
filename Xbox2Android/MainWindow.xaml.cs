@@ -72,7 +72,7 @@ tagRetry:
 		private void comboTriggerMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			ProgramSettings.TriggerMode = comboTriggerMode.SelectedIndex;
-			m_timer?.Change(TriggerAction.ActionInterval[ProgramSettings.TriggerMode]);
+			m_timer?.Change(RightTriggerAction.ActionInterval[ProgramSettings.TriggerMode]);
 		}
 
 		private void checkReverseAxis_CheckedChanged(object sender, RoutedEventArgs e)

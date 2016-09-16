@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading;
-using Xbox2Android.Native;
+﻿using Xbox2Android.Native;
 
 namespace Xbox2Android
 {
-	static class TriggerAction
+	static class RightTriggerAction
 	{
 #region Internal data types
 

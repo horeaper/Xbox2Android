@@ -9,6 +9,7 @@ namespace Xbox2Android
 		const int ThumbDeadzone = short.MaxValue / 2;
 		const int TriggerDeadzone = byte.MaxValue / 2;
 		XInput.Gamepad m_previousGamepad;
+		bool m_isTriggerDown = false;
 
 		void ResetGamepadState()
 		{
@@ -21,8 +22,25 @@ namespace Xbox2Android
 			XInput.State state;
 			if (XInput.GetState(0, out state) == XInput.ErrorSuccess) {
 				ProcessAxis(state.Gamepad);
-				if (!ProcessRightTrigger(state.Gamepad)) {
-					ProcessButton(state.Gamepad);
+
+				if (!ProcessButton(state.Gamepad)) {
+					//If button is not handled, process trigger
+					if (state.Gamepad.RightTrigger > TriggerDeadzone) {
+						RightTriggerAction.TriggerDown(ProgramSettings.TriggerMode);
+						m_isTriggerDown = true;
+					}
+					else {
+						if (m_previousGamepad.RightTrigger > TriggerDeadzone) {
+							RightTriggerAction.TriggerUp(ProgramSettings.TriggerMode);
+							m_isTriggerDown = false;
+						}
+					}
+				}
+				else {
+					if (m_isTriggerDown) {
+						RightTriggerAction.TriggerUp(ProgramSettings.TriggerMode);
+						m_isTriggerDown = false;
+					}
 				}
 
 				m_previousGamepad = state.Gamepad;
@@ -137,12 +155,12 @@ namespace Xbox2Android
 			bool isPreviousDown = m_previousGamepad.RightTrigger > TriggerDeadzone;
 
 			if (gamepad.RightTrigger > TriggerDeadzone) {
-				TriggerAction.TriggerDown(ProgramSettings.TriggerMode);
+				RightTriggerAction.TriggerDown(ProgramSettings.TriggerMode);
 				return true;
 			}
 			else {
 				if (isPreviousDown) {
-					TriggerAction.TriggerUp(ProgramSettings.TriggerMode);
+					RightTriggerAction.TriggerUp(ProgramSettings.TriggerMode);
 					return true;
 				}
 			}
@@ -150,12 +168,14 @@ namespace Xbox2Android
 			return false;
 		}
 
-		void ProcessButton(XInput.Gamepad gamepad)
+		bool ProcessButton(XInput.Gamepad gamepad)
 		{
+			bool isHandled = false;
 			for (int buttonId = 0; buttonId < Constants.ButtonValue.Length; ++buttonId) {
 				var flag = Constants.ButtonValue[buttonId];
 				bool isPreviousButtonDown = m_previousGamepad.Buttons.HasFlag(flag);
 				if (gamepad.Buttons.HasFlag(flag)) {
+					isHandled = true;
 					if (!isPreviousButtonDown) {
 						InputMapper.ButtonDown(buttonId);
 					}
@@ -163,9 +183,11 @@ namespace Xbox2Android
 				else {
 					if (isPreviousButtonDown) {
 						InputMapper.ButtonUp(buttonId);
+						isHandled = true;
 					}
 				}
 			}
+			return isHandled;
 		}
 	}
 }

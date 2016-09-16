@@ -80,7 +80,7 @@
     <Compile Include="TouchProfileWindow.xaml.cs">
       <DependentUpon>TouchProfileWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TriggerAction.cs" />
+    <Compile Include="RightTriggerAction.cs" />
     <Page Include="Controls\AxisControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
