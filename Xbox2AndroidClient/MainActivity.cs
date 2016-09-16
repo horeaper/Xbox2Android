@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Xml.Linq;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -19,10 +21,7 @@ namespace Xbox2AndroidClient
 		Button buttonStop;
 
 		public static MainActivity Instance { get; private set; }
-		public static string Name { get; private set; }
-		public static IPAddress IP { get; private set; }
-		public static string InputEvent { get; private set; }
-		public const int ServerPort = 21499;
+		string m_inputEventPath;
 
 		protected override void OnCreate(Bundle bundle)
 		{
@@ -39,8 +38,8 @@ namespace Xbox2AndroidClient
 
 			Load();
 			SetServiceRunning(NetworkService.IsRunning);
-			if (string.IsNullOrEmpty(InputEvent)) {
-				InputEvent = GetTouchInputEvent();
+			if (string.IsNullOrEmpty(m_inputEventPath)) {
+				m_inputEventPath = GetTouchInputEvent();
 			}
 		}
 
@@ -59,17 +58,15 @@ namespace Xbox2AndroidClient
 		private void ButtonConnect_Click(object sender, EventArgs e)
 		{
 			IPAddress address;
-			if (string.IsNullOrEmpty(InputEvent)) {
+			if (string.IsNullOrEmpty(m_inputEventPath)) {
 				var dialog = new AlertDialog.Builder(this);
 				dialog.SetMessage("Unable to identify input event ╮(╯▽╰)╭\nPlease make sure the device is rooted.");
 				dialog.SetNeutralButton("OK", (s, ev) => { });
 				dialog.Show();
 			}
 			else if (textName.Text.Length > 0 && textIP.Text.Length > 0 && IPAddress.TryParse(textIP.Text, out address)) {
-				Name = textName.Text;
-				IP = address;
+				Save();
 				StartService(new Intent(this, typeof(NetworkService)));
-				SetServiceRunning(true);
 			}
 			else {
 				var dialog = new AlertDialog.Builder(this);
@@ -82,27 +79,32 @@ namespace Xbox2AndroidClient
 		private void ButtonStop_Click(object sender, EventArgs e)
 		{
 			StopService(new Intent(this, typeof(NetworkService)));
-			SetServiceRunning(false);
 		}
 
 		void Load()
 		{
-			using (var pref = GetPreferences(FileCreationMode.Private)) {
-				textName.Text = pref.GetString("Name", "");
-				textIP.Text = pref.GetString("IP", "");
-				InputEvent = pref.GetString("InputDevice", "");
+			try {
+				var settingPath = Path.Combine(GetExternalFilesDir(null).AbsolutePath, "settings.xml");
+				var document = XDocument.Load(settingPath);
+				var element = document.Root;
+				textName.Text = element.Attribute("Name").Value;
+				textIP.Text = element.Attribute("IP").Value;
+				m_inputEventPath = element.Attribute("InputEventPath").Value;
+			}
+			catch {
+				// ignored
 			}
 		}
 
 		void Save()
 		{
-			using (var pref = GetPreferences(FileCreationMode.Private)) {
-				var editor = pref.Edit();
-				editor.PutString("Name", textName.Text);
-				editor.PutString("IP", textIP.Text);
-				editor.PutString("InputDevice", InputEvent);
-				editor.Commit();
-			}
+			var element = new XElement("Data");
+			element.SetAttributeValue("Name", textName.Text);
+			element.SetAttributeValue("IP", textIP.Text);
+			element.SetAttributeValue("InputEventPath", m_inputEventPath);
+			var document = new XDocument(element);
+			var settingPath = Path.Combine(GetExternalFilesDir(null).AbsolutePath, "settings.xml");
+			document.Save(settingPath);
 		}
 
 		public void SetServiceRunning(bool isRunning)

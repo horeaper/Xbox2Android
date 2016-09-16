@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Xml.Linq;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -12,11 +15,15 @@ using Java.IO;
 namespace Xbox2AndroidClient
 {
 	[Service]
-	public partial class NetworkService : Service
+	public class NetworkService : Service
 	{
+		public const int ServerPort = 21499;
 		public static bool IsRunning { get; private set; }
 
 		Handler m_handler = new Handler(Looper.MainLooper);
+		string m_name;
+		IPAddress m_ip;
+		string m_inputEventPath;
 		Socket m_socket;
 		byte[] m_buffer = new byte[1400];
 
@@ -27,19 +34,35 @@ namespace Xbox2AndroidClient
 		{
 			base.OnCreate();
 			IsRunning = true;
+			if (MainActivity.Instance != null) {
+				MainActivity.Instance.SetServiceRunning(true);
+			}
+
+			try {
+				var settingPath = Path.Combine(GetExternalFilesDir(null).AbsolutePath, "settings.xml");
+				var document = XDocument.Load(settingPath);
+				var element = document.Root;
+				m_name = element.Attribute("Name").Value;
+				m_ip = IPAddress.Parse(element.Attribute("IP").Value);
+				m_inputEventPath = element.Attribute("InputEventPath").Value;
+			}
+			catch {
+				StopSelf();
+				return;
+			}
 
 			InitTouchInjector();
 			m_socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
-			m_socket.BeginConnect(MainActivity.IP, MainActivity.ServerPort, ServerConnectedCallback, m_socket);
+			m_socket.BeginConnect(m_ip, ServerPort, ServerConnectedCallback, m_socket);
 
 			var proc = Java.Lang.Runtime.GetRuntime().Exec("su");
 			var output = new DataOutputStream(proc.OutputStream);
-			output.WriteBytes($"chmod 666 {MainActivity.InputEvent}\n");
+			output.WriteBytes($"chmod 666 {m_inputEventPath}\n");
 			output.Flush();
 			output.WriteBytes("exit\n");
 			output.Flush();
 			proc.WaitFor();
-			if (!OpenTouchDevice(MainActivity.InputEvent)) {
+			if (!OpenTouchDevice(m_inputEventPath)) {
 				Toast.MakeText(this, "Unable to open input event ¨r(¨s¨Œ¨t)¨q\nPlease make sure the device is rooted.", ToastLength.Long).Show();
 				StopSelf();
 			}
@@ -53,7 +76,7 @@ namespace Xbox2AndroidClient
 
 			var proc = Java.Lang.Runtime.GetRuntime().Exec("su");
 			var output = new DataOutputStream(proc.OutputStream);
-			output.WriteBytes($"chmod 660 {MainActivity.InputEvent}\n");
+			output.WriteBytes($"chmod 660 {m_inputEventPath}\n");
 			output.Flush();
 			output.WriteBytes("exit\n");
 			output.Flush();
@@ -81,7 +104,7 @@ namespace Xbox2AndroidClient
 				return;
 			}
 
-			socket.Send(Encoding.UTF8.GetBytes(MainActivity.Name));
+			socket.Send(Encoding.UTF8.GetBytes(m_name));
 			socket.BeginReceive(m_buffer, 0, m_buffer.Length, SocketFlags.None, DataReceivedCallback, socket);
 		}
 
