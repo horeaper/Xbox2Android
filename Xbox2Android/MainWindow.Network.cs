@@ -4,7 +4,9 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Xbox2Android
 {
@@ -24,16 +26,37 @@ namespace Xbox2Android
 		{
 			var addresses = Dns.GetHostAddresses(Dns.GetHostName());
 			var ipList = addresses.Where(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+			var displayList = new List<IPAddress>();
 			foreach (var ip in ipList) {
 				var bytes = ip.GetAddressBytes();
 				if (bytes[0] != 169 && bytes[1] != 254) {
-					listLocalIPs.Items.Add(ip);
+					displayList.Add(ip);
 
 					var listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 					listener.Bind(new IPEndPoint(ip, ListenPort));
 					listener.Listen(10);
 					listener.BeginAccept(ClientConnectedCallback, listener);
 				}
+			}
+			displayList.Sort((left, right) => {
+				var bytesL = left.GetAddressBytes();
+				var bytesR = right.GetAddressBytes();
+				int valL = bytesL[0] << 24 | bytesL[1] << 16 | bytesL[2] << 8 | bytesL[3];
+				int valR = bytesR[0] << 24 | bytesR[1] << 16 | bytesR[2] << 8 | bytesR[3];
+				if (valL < valR) {
+					return -1;
+				}
+				else if (valL > valR) {
+					return 1;
+				}
+				else {
+					return 0;
+				}
+			});
+			foreach (var ip in displayList) {
+				menuLocalIPs.Items.Add(new MenuItem {
+					Header = ip.ToString()
+				});
 			}
 		}
 
@@ -42,11 +65,11 @@ namespace Xbox2Android
 			m_clients.Remove(client);
 
 			Dispatcher.Invoke(() => {
-				foreach (ComboBoxItem item in comboClients.Items) {
+				foreach (ListBoxItem item in listClients.Items) {
 					if (ReferenceEquals(item.Tag, client)) {
-						comboClients.Items.Remove(item);
-						if (comboClients.SelectedIndex == -1 && comboClients.Items.Count > 0) {
-							comboClients.SelectedIndex = 0;
+						listClients.Items.Remove(item);
+						if (listClients.SelectedIndex == -1 && listClients.Items.Count > 0) {
+							listClients.SelectedIndex = 0;
 						}
 						return;
 					}
@@ -99,12 +122,12 @@ namespace Xbox2Android
 
 			m_clients.Add(client);
 			Dispatcher.Invoke(() => {
-				comboClients.Items.Add(new ComboBoxItem {
+				listClients.Items.Add(new ListBoxItem {
 					Content = Encoding.UTF8.GetString(client.Buffer, 0, bytesReceived),
 					Tag = client,
 				});
-				if (comboClients.SelectedIndex == -1) {
-					comboClients.SelectedIndex = 0;
+				if (listClients.SelectedIndex == -1) {
+					listClients.SelectedIndex = 0;
 				}
 			});
 

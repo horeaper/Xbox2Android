@@ -151,63 +151,41 @@ namespace Xbox2Android
 			new ActionSlide(XInput.GamePadButton.Y, XInput.GamePadButton.B, XInput.GamePadButton.A),
 		};
 
-		static readonly ITriggerAction[] TriggerHappyA = {
+		static readonly ITriggerAction[] TriggerHappy = {
 			new ActionButtonClick(XInput.GamePadButton.A, 0),
 		};
 
-		static readonly ITriggerAction[] TriggerHappyMadnessA = {
+		static readonly ITriggerAction[] TriggerHappyMadness = {
 			new ActionButtonClick(XInput.GamePadButton.A, 0),
 		};
 
-		static readonly ITriggerAction[] TriggerHappyB = {
-			new ActionButtonClick(XInput.GamePadButton.B, 0),
+		static readonly ITriggerAction[][][] Actions = {
+			new[] { TriggerHappy, TriggerHappyMadness },
+			new[] { DoubleHarmony, DoubleHarmonyShock, DoubleHarmonyMadness },
+			new[] { TripleTriplet, TripleTripletFrenzy, TripleTripletMadness },
 		};
 
-		static readonly ITriggerAction[] TriggerMadnessB = {
-			new ActionButtonClick(XInput.GamePadButton.B, 0),
-		};
-
-		static readonly ITriggerAction[][] Actions = {
-			DoubleHarmony,
-			DoubleHarmonyShock,
-			DoubleHarmonyMadness,
-			TripleTriplet,
-			TripleTripletFrenzy,
-			TripleTripletMadness,
-			TriggerHappyA,
-			TriggerHappyMadnessA,
-			TriggerHappyB,
-			TriggerMadnessB,
-		};
-
-		public static readonly float[] ActionInterval = {
-			1 / 30.0f,
-			1 / 30.0f,
-			1 / 30.0f,
-			1 / 30.0f,
-			1 / 30.0f,
-			1 / 30.0f,
-			1 / 30.0f,
-			1 / 60.0f,
-			1 / 30.0f,
-			1 / 60.0f,
+		public static readonly float[][] ActionInterval = {
+			new[] { 1 / 30.0f, 1 / 60.0f },
+			new[] { 1 / 30.0f, 1 / 30.0f, 1 / 30.0f },
+			new[] { 1 / 30.0f, 1 / 30.0f, 1 / 30.0f },
 		};
 
 #endregion
 
 		static int m_currentIndex;
 
-		public static void TriggerDown(int triggerMode)
+		public static void TriggerDown(int mode, int value)
 		{
-			if (Actions[triggerMode][m_currentIndex].OnFrameUpdate()) {
+			if (Actions[mode][value][m_currentIndex].OnFrameUpdate()) {
 				++m_currentIndex;
-				m_currentIndex %= Actions[triggerMode].Length;
+				m_currentIndex %= Actions[mode][value].Length;
 			}
 		}
 
-		public static void TriggerUp(int triggerMode)
+		public static void TriggerUp(int mode, int value)
 		{
-			Actions[triggerMode][m_currentIndex].OnCancel();
+			Actions[mode][value][m_currentIndex].OnCancel();
 			m_currentIndex = 0;
 		}
 	}

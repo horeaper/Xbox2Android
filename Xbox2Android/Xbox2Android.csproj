@@ -70,6 +70,9 @@
       <DependentUpon>ButtonControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\IDisplayControl.cs" />
+    <Compile Include="Controls\TriggerModePanel.xaml.cs">
+      <DependentUpon>TriggerModePanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.Icon.cs" />
     <Compile Include="MainWindow.Timer.cs" />
     <Compile Include="InputMapper.cs" />
@@ -86,6 +89,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ButtonControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\TriggerModePanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

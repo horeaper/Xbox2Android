@@ -4,7 +4,7 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		mc:Ignorable="d"
-		Title="Right click for menu" Width="300" Height="300" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False" SizeToContent="WidthAndHeight" MinWidth="320" MinHeight="240">
+		Title="Right click for menu" Width="300" Height="300" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" SizeToContent="WidthAndHeight" MinWidth="320" MinHeight="240">
 	<Window.Resources>
 	</Window.Resources>
 

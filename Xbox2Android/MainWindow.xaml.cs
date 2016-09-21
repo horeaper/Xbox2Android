@@ -1,21 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Xbox2Android
 {
-	/// <summary>
-	/// Interaction logic for MainWindow.xaml
-	/// </summary>
 	sealed partial class MainWindow : Window
 	{
-		[DllImport("Kernel32.dll", CallingConvention = CallingConvention.StdCall, SetLastError = true)]
-		static extern bool QueryPerformanceFrequency(out long frequency);
-		[DllImport("Kernel32.dll", CallingConvention = CallingConvention.StdCall, SetLastError = true)]
-		static extern bool QueryPerformanceCounter(out long counter);
-
+		public static bool IsLoading;
 		ThreadTimer m_timer;
 		ClientParam m_selectedClient;
 
@@ -24,24 +17,52 @@ namespace Xbox2Android
 			InitializeComponent();
 
 			ProgramSettings.Load();
-			comboTriggerMode.SelectedIndex = ProgramSettings.TriggerMode;
+			IsLoading = true;
+			triggerModeHappy.Value = ProgramSettings.TriggerHappyValue;
+			triggerModeDouble.Value = ProgramSettings.TriggerDoubleValue;
+			triggerModeTriple.Value = ProgramSettings.TriggerTripleValue;
+			switch (ProgramSettings.TriggerMode) {
+				case 0:
+					triggerModeHappy.IsChecked = true;
+					break;
+				case 1:
+					triggerModeDouble.IsChecked = true;
+					break;
+				case 2:
+					triggerModeTriple.IsChecked = true;
+					break;
+			}
 			checkReverseAxis.IsChecked = ProgramSettings.IsReverseAxis;
 			check8Axis.IsChecked = ProgramSettings.Is8Axis;
 			checkSnapAxis.IsChecked = ProgramSettings.IsSnapAxis;
+			IsLoading = false;
 			CreateNotifyIcon();
 			StartServer();
 		}
 
 		private void MainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			m_timer = new ThreadTimer(Timer_Tick, 1 / 30.0f);
-			WindowState = ProgramSettings.IsMinimized ? WindowState.Minimized : WindowState.Normal;
-			MainWindow_StateChanged(null, null);
+			switch (ProgramSettings.TriggerMode) {
+				case 0:
+					m_timer = new ThreadTimer(Timer_Tick, RightTriggerAction.ActionInterval[0][ProgramSettings.TriggerHappyValue]);
+					break;
+				case 1:
+					m_timer = new ThreadTimer(Timer_Tick, RightTriggerAction.ActionInterval[1][ProgramSettings.TriggerDoubleValue]);
+					break;
+				case 2:
+					m_timer = new ThreadTimer(Timer_Tick, RightTriggerAction.ActionInterval[2][ProgramSettings.TriggerTripleValue]);
+					break;
+			}
+
+			if (WindowState == WindowState.Normal) {
+				var workArea = SystemParameters.WorkArea;
+				this.Left = workArea.Left + workArea.Width - this.Width;
+				this.Top = workArea.Top;
+			}
 		}
 
 		private void MainWindow_Closing(object sender, CancelEventArgs e)
 		{
-			ProgramSettings.IsMinimized = WindowState == WindowState.Minimized;
 			m_notifyIcon.Visible = false;
 
 tagRetry:
@@ -56,45 +77,83 @@ tagRetry:
 			Environment.Exit(0);
 		}
 
-		private void MainWindow_StateChanged(object sender, EventArgs e)
+		void LayoutRoot_OnMouseEnter(object sender, MouseEventArgs e)
 		{
-			if (WindowState == WindowState.Minimized) {
-				Hide();
-				m_notifyIcon.Visible = true;
+			this.Opacity = 1;
+		}
+
+		void LayoutRoot_OnMouseLeave(object sender, MouseEventArgs e)
+		{
+			this.Opacity = 0.5;
+		}
+
+		void MenuTouchProfile_OnClick(object sender, RoutedEventArgs e)
+		{
+			new TouchProfileWindow(this).ShowDialog();
+		}
+
+		void MenuExit_OnClick(object sender, RoutedEventArgs e)
+		{
+			Close();
+		}
+
+		void listClients_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			m_selectedClient = (ClientParam)((ListBoxItem)listClients.SelectedItem)?.Tag;
+		}
+
+		void TriggerModeHappy_OnSelected(object sender, EventArgs e)
+		{
+			if (!IsLoading) {
+				triggerModeDouble.IsChecked = false;
+				triggerModeTriple.IsChecked = false;
+				ProgramSettings.TriggerMode = 0;
+				ProgramSettings.TriggerHappyValue = triggerModeHappy.Value;
+				m_timer.Change(RightTriggerAction.ActionInterval[0][ProgramSettings.TriggerHappyValue]);
 			}
 		}
 
-		private void comboClients_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		void TriggerModeDouble_OnSelected(object sender, EventArgs e)
 		{
-			m_selectedClient = (ClientParam)((ComboBoxItem)comboClients.SelectedItem)?.Tag;
+			if (!IsLoading) {
+				triggerModeHappy.IsChecked = false;
+				triggerModeTriple.IsChecked = false;
+				ProgramSettings.TriggerMode = 1;
+				ProgramSettings.TriggerDoubleValue = triggerModeDouble.Value;
+				m_timer.Change(RightTriggerAction.ActionInterval[1][ProgramSettings.TriggerDoubleValue]);
+			}
 		}
 
-		private void comboTriggerMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		void TriggerModeTriple_OnSelected(object sender, EventArgs e)
 		{
-			ProgramSettings.TriggerMode = comboTriggerMode.SelectedIndex;
-			m_timer?.Change(RightTriggerAction.ActionInterval[ProgramSettings.TriggerMode]);
+			if (!IsLoading) {
+				triggerModeHappy.IsChecked = false;
+				triggerModeDouble.IsChecked = false;
+				ProgramSettings.TriggerMode = 2;
+				ProgramSettings.TriggerTripleValue = triggerModeTriple.Value;
+				m_timer.Change(RightTriggerAction.ActionInterval[2][ProgramSettings.TriggerTripleValue]);
+			}
 		}
 
-		private void checkReverseAxis_CheckedChanged(object sender, RoutedEventArgs e)
+		void checkReverseAxis_OnCheckedChanged(object sender, RoutedEventArgs e)
 		{
-			ProgramSettings.IsReverseAxis = checkReverseAxis.IsChecked == true;
+			if (!IsLoading) {
+				ProgramSettings.IsReverseAxis = checkReverseAxis.IsChecked == true;
+			}
 		}
 
-		private void checkSnapAxis_CheckedChanged(object sender, RoutedEventArgs e)
+		void checkSnapAxis_OnCheckedChanged(object sender, RoutedEventArgs e)
 		{
-			ProgramSettings.IsSnapAxis = checkSnapAxis.IsChecked == true;
+			if (!IsLoading) {
+				ProgramSettings.IsSnapAxis = checkSnapAxis.IsChecked == true;
+			}
 		}
 
-		private void check8Axis_CheckedChanged(object sender, RoutedEventArgs e)
+		void check8Axis_OnCheckedChanged(object sender, RoutedEventArgs e)
 		{
-			ProgramSettings.Is8Axis = check8Axis.IsChecked == true;
-		}
-
-		private void btnTouchProfile_Click(object sender, RoutedEventArgs e)
-		{
-			var profileWindow = new TouchProfileWindow();
-			profileWindow.Owner = this;
-			profileWindow.ShowDialog();
+			if (!IsLoading) {
+				ProgramSettings.Is8Axis = check8Axis.IsChecked == true;
+			}
 		}
 	}
 }

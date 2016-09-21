@@ -12,9 +12,6 @@ using Xbox2Android.Native;
 
 namespace Xbox2Android
 {
-	/// <summary>
-	/// Interaction logic for TouchProfileWindow.xaml
-	/// </summary>
 	sealed partial class TouchProfileWindow : Window
 	{
 		AxisControl m_axisControl;
@@ -26,8 +23,9 @@ namespace Xbox2Android
 		Point m_mouseRightClickPoint;
 		Vector m_mouseDragOffset;
 
-		public TouchProfileWindow()
+		public TouchProfileWindow(Window owner)
 		{
+			Owner = owner;
 			InitializeComponent();
 			for (int index = 0; index < Constants.ButtonCount; ++index) {
 				m_buttonControls[index] = new List<ButtonControl>();

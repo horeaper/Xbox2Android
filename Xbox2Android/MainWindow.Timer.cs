@@ -21,28 +21,45 @@ namespace Xbox2Android
 		{
 			XInput.State state;
 			if (XInput.GetState(0, out state) == XInput.ErrorSuccess) {
-				ProcessAxis(state.Gamepad);
+				int triggerValue = 0;
+				switch (ProgramSettings.TriggerMode) {
+					case 0:
+						triggerValue = ProgramSettings.TriggerHappyValue;
+						break;
+					case 1:
+						triggerValue = ProgramSettings.TriggerDoubleValue;
+						break;
+					case 2:
+						triggerValue = ProgramSettings.TriggerTripleValue;
+						break;
+				}
 
+				//Button
 				if (!ProcessButton(state.Gamepad)) {
 					//If button is not handled, process trigger
 					if (state.Gamepad.RightTrigger > TriggerDeadzone) {
-						RightTriggerAction.TriggerDown(ProgramSettings.TriggerMode);
+						RightTriggerAction.TriggerDown(ProgramSettings.TriggerMode, triggerValue);
 						m_isTriggerDown = true;
 					}
 					else {
 						if (m_previousGamepad.RightTrigger > TriggerDeadzone) {
-							RightTriggerAction.TriggerUp(ProgramSettings.TriggerMode);
+							RightTriggerAction.TriggerUp(ProgramSettings.TriggerMode, triggerValue);
 							m_isTriggerDown = false;
 						}
 					}
 				}
 				else {
+					//If button is pressed while trigger is still processing, cancel it
 					if (m_isTriggerDown) {
-						RightTriggerAction.TriggerUp(ProgramSettings.TriggerMode);
+						RightTriggerAction.TriggerUp(ProgramSettings.TriggerMode, triggerValue);
 						m_isTriggerDown = false;
 					}
 				}
 
+				//Axis
+				ProcessAxis(state.Gamepad);
+
+				//Refresh
 				m_previousGamepad = state.Gamepad;
 				if (m_selectedClient != null) {
 					InputMapper.FrameUpdate(m_selectedClient, SendData);
@@ -55,6 +72,28 @@ namespace Xbox2Android
 
 		bool m_isDirectionInEffect;
 		bool m_isShadowAxis;
+
+		bool ProcessButton(XInput.Gamepad gamepad)
+		{
+			bool isHandled = false;
+			for (int buttonId = 0; buttonId < Constants.ButtonValue.Length; ++buttonId) {
+				var flag = Constants.ButtonValue[buttonId];
+				bool isPreviousButtonDown = m_previousGamepad.Buttons.HasFlag(flag);
+				if (gamepad.Buttons.HasFlag(flag)) {
+					isHandled = true;
+					if (!isPreviousButtonDown) {
+						InputMapper.ButtonDown(buttonId);
+					}
+				}
+				else {
+					if (isPreviousButtonDown) {
+						InputMapper.ButtonUp(buttonId);
+						isHandled = true;
+					}
+				}
+			}
+			return isHandled;
+		}
 
 		void ProcessAxis(XInput.Gamepad gamepad)
 		{
@@ -148,46 +187,6 @@ namespace Xbox2Android
 					}
 				}
 			}
-		}
-
-		bool ProcessRightTrigger(XInput.Gamepad gamepad)
-		{
-			bool isPreviousDown = m_previousGamepad.RightTrigger > TriggerDeadzone;
-
-			if (gamepad.RightTrigger > TriggerDeadzone) {
-				RightTriggerAction.TriggerDown(ProgramSettings.TriggerMode);
-				return true;
-			}
-			else {
-				if (isPreviousDown) {
-					RightTriggerAction.TriggerUp(ProgramSettings.TriggerMode);
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		bool ProcessButton(XInput.Gamepad gamepad)
-		{
-			bool isHandled = false;
-			for (int buttonId = 0; buttonId < Constants.ButtonValue.Length; ++buttonId) {
-				var flag = Constants.ButtonValue[buttonId];
-				bool isPreviousButtonDown = m_previousGamepad.Buttons.HasFlag(flag);
-				if (gamepad.Buttons.HasFlag(flag)) {
-					isHandled = true;
-					if (!isPreviousButtonDown) {
-						InputMapper.ButtonDown(buttonId);
-					}
-				}
-				else {
-					if (isPreviousButtonDown) {
-						InputMapper.ButtonUp(buttonId);
-						isHandled = true;
-					}
-				}
-			}
-			return isHandled;
 		}
 	}
 }

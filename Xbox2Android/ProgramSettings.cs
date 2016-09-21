@@ -6,9 +6,10 @@ namespace Xbox2Android
 {
 	static class ProgramSettings
 	{
-		public static bool IsMinimized;
-
 		public static int TriggerMode;
+		public static int TriggerHappyValue;
+		public static int TriggerDoubleValue;
+		public static int TriggerTripleValue;
 		public static bool IsReverseAxis;
 		public static bool IsSnapAxis;
 		public static bool Is8Axis;
@@ -26,9 +27,18 @@ namespace Xbox2Android
 				var doc = XDocument.Load("InputSettings.xml");
 				var rootElement = doc.Root;
 
-				IsMinimized = bool.Parse(rootElement.Attribute("IsMinimized").Value);
-
-				TriggerMode = int.Parse(rootElement.Attribute("TriggerMode").Value);
+				if (rootElement.Attribute("TriggerMode") != null) {
+					TriggerMode = int.Parse(rootElement.Attribute("TriggerMode").Value);
+				}
+				if (rootElement.Attribute("TriggerHappyValue") != null) {
+					TriggerHappyValue = int.Parse(rootElement.Attribute("TriggerHappyValue").Value);
+				}
+				if (rootElement.Attribute("TriggerDoubleValue") != null) {
+					TriggerDoubleValue = int.Parse(rootElement.Attribute("TriggerDoubleValue").Value);
+				}
+				if (rootElement.Attribute("TriggerTripleValue") != null) {
+					TriggerTripleValue = int.Parse(rootElement.Attribute("TriggerTripleValue").Value);
+				}
 				if (rootElement.Attribute("IsReverseAxis") != null) {
 					IsReverseAxis = bool.Parse(rootElement.Attribute("IsReverseAxis").Value);
 				}
@@ -67,8 +77,10 @@ namespace Xbox2Android
 		{
 			try {
 				var rootElement = new XElement("Settings");
-				rootElement.SetAttributeValue("IsMinimized", IsMinimized);
 				rootElement.SetAttributeValue("TriggerMode", TriggerMode);
+				rootElement.SetAttributeValue("TriggerHappyValue", TriggerHappyValue);
+				rootElement.SetAttributeValue("TriggerDoubleValue", TriggerDoubleValue);
+				rootElement.SetAttributeValue("TriggerTripleValue", TriggerTripleValue);
 				rootElement.SetAttributeValue("IsReverseAxis", IsReverseAxis);
 				rootElement.SetAttributeValue("IsSnapAxis", IsSnapAxis);
 				rootElement.SetAttributeValue("Is8Axis", Is8Axis);

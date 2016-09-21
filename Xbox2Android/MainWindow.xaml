@@ -1,61 +1,42 @@
-﻿<Window x:Class="Xbox2Android.MainWindow"
+﻿<Window
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:Controls="clr-namespace:Xbox2Android.Controls" x:Class="Xbox2Android.MainWindow"
 		mc:Ignorable="d"
-		Title="Xbox 2 Android" Width="250" Height="285" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" FontFamily="Segoe UI" FontSize="12" Icon="Program.ico"
-		Loaded="MainWindow_Loaded" Closing="MainWindow_Closing" StateChanged="MainWindow_StateChanged">
-	<Grid>
+		Title="Xbox 2 Android" Width="350" Height="130" Opacity="0.5" AllowsTransparency="True" WindowStartupLocation="Manual" ResizeMode="NoResize" Topmost="True" ShowInTaskbar="False" FontFamily="Segoe UI" FontSize="12" Icon="Program.ico"
+		Loaded="MainWindow_Loaded" Closing="MainWindow_Closing" WindowStyle="None">
+	<Grid Background="White" MouseEnter="LayoutRoot_OnMouseEnter" MouseLeave="LayoutRoot_OnMouseLeave">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="100" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="25" />
 		</Grid.RowDefinitions>
-		<StackPanel Orientation="Vertical" Grid.RowSpan="2">
-			<Grid Margin="10,0,10,0">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="*" />
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
 
-				<StackPanel Orientation="Vertical" Grid.ColumnSpan="2" Margin="0,5,0,5">
-					<TextBlock Text="Local IPs" Margin="10,0,0,5" />
-					<ListBox x:Name="listLocalIPs" Height="43" />
-				</StackPanel>
+		<Menu Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+			<MenuItem Header="Touch Profile" Margin="2" Click="MenuTouchProfile_OnClick" />
+			<MenuItem x:Name="menuLocalIPs" Header="Local IPs" Margin="2"  />
+			<MenuItem Header="Exit" Margin="2" Click="MenuExit_OnClick" />
+		</Menu>
 
-				<TextBlock Text="Client" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Right" />
-				<ComboBox x:Name="comboClients" Grid.Column="1" Grid.Row="1" Margin="5,5,0,5" Height="23" SelectionChanged="comboClients_SelectionChanged" />
+		<TextBlock Text="Clients" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,5,0,0" />
+		<ListBox x:Name="listClients" Grid.Row="1" Grid.RowSpan="2" Margin="5,25,5,5" SelectionChanged="listClients_OnSelectionChanged" />
 
-				<TextBlock Text="R-Trigger" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Right" />
-				<ComboBox x:Name="comboTriggerMode" Grid.Column="1" Grid.Row="2" Margin="5,5,0,5" Height="23" SelectionChanged="comboTriggerMode_SelectionChanged">
-					<ComboBox.Items>
-						<ComboBoxItem Content="Double Harmony" />
-						<ComboBoxItem Content="Double Harmony Shock!!" />
-						<ComboBoxItem Content="Double Harmony Madness" />
-						<ComboBoxItem Content="Triple Triplet" />
-						<ComboBoxItem Content="Triple Triplet Frenzy!!" />
-						<ComboBoxItem Content="Triple Triplet Madness" />
-						<ComboBoxItem Content="Trigger Happy A" />
-						<ComboBoxItem Content="Trigger Happy Madness A" />
-						<ComboBoxItem Content="Trigger Happy B" />
-						<ComboBoxItem Content="Trigger Happy Madness B" />
-					</ComboBox.Items>
-				</ComboBox>
-			</Grid>
-
-			<StackPanel Orientation="Vertical" Margin="10,0,10,0">
-				<CheckBox x:Name="checkReverseAxis" HorizontalAlignment="Left" Margin="0,5,0,5" Content="Reverse Axis" Checked="checkReverseAxis_CheckedChanged" Unchecked="checkReverseAxis_CheckedChanged"/>
-				<CheckBox x:Name="checkSnapAxis" HorizontalAlignment="Left" Margin="0,5,0,5" Content="Snap Axis" Checked="checkSnapAxis_CheckedChanged" Unchecked="checkSnapAxis_CheckedChanged"/>
-				<CheckBox x:Name="check8Axis" HorizontalAlignment="Left" Margin="0,5,0,5" Content="8-Axis" Checked="check8Axis_CheckedChanged" Unchecked="check8Axis_CheckedChanged"/>
-			</StackPanel>
+		<StackPanel Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="5,0,5,0">
+			<Controls:TriggerModePanel x:Name="triggerModeHappy" HorizontalAlignment="Stretch" Text="Happy" MaximumValue="1" Margin="0,5,0,5" Selected="TriggerModeHappy_OnSelected" />
+			<Controls:TriggerModePanel x:Name="triggerModeDouble" HorizontalAlignment="Stretch" Text="Double" MaximumValue="2" Margin="0,5,0,5" Selected="TriggerModeDouble_OnSelected" />
+			<Controls:TriggerModePanel x:Name="triggerModeTriple" HorizontalAlignment="Stretch" Text="Triple" MaximumValue="2" Margin="0,5,0,5" Selected="TriggerModeTriple_OnSelected" />
 		</StackPanel>
 
-		<Button Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" Width="120" Height="23" Content="Touch Profile" Click="btnTouchProfile_Click"/>
+		<StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+			<CheckBox x:Name="checkReverseAxis" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,5,0" Content="Reverse Axis" Checked="checkReverseAxis_OnCheckedChanged" Unchecked="checkReverseAxis_OnCheckedChanged"/>
+			<CheckBox x:Name="checkSnapAxis" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,5,0" Content="Snap Axis" Checked="checkSnapAxis_OnCheckedChanged" Unchecked="checkSnapAxis_OnCheckedChanged"/>
+			<CheckBox x:Name="check8Axis" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,5,0" Content="8-Axis" Checked="check8Axis_OnCheckedChanged" Unchecked="check8Axis_OnCheckedChanged"/>
+		</StackPanel>
 	</Grid>
 </Window>
