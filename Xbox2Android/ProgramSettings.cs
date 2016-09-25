@@ -23,6 +23,9 @@ namespace Xbox2Android
 
 		public static void Load()
 		{
+			for (int cnt = 0; cnt < Constants.ButtonCount; ++cnt) {
+				ButtonPositions[cnt] = new List<Point>();
+			}
 			try {
 				var doc = XDocument.Load("InputSettings.xml");
 				var rootElement = doc.Root;
@@ -56,9 +59,6 @@ namespace Xbox2Android
 				ShadowAxisOffset = int.Parse(rootElement.Attribute("ShadowAxisOffset").Value);
 				BackgroundImage = rootElement.Attribute("BackgroundImage").Value;
 
-				for (int cnt = 0; cnt < Constants.ButtonCount; ++cnt) {
-					ButtonPositions[cnt] = new List<Point>();
-				}
 				int index = 0;
 				foreach (var buttonElement in rootElement.Elements("Button")) {
 					foreach (var pointElement in buttonElement.Elements("Point")) {
