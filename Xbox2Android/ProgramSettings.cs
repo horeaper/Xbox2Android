@@ -10,6 +10,7 @@ namespace Xbox2Android
 		public static int TriggerHappyValue;
 		public static int TriggerDoubleValue;
 		public static int TriggerTripleValue;
+		public static bool IsHotKey;
 		public static bool IsReverseAxis;
 		public static bool IsSnapAxis;
 		public static bool Is8Axis;
@@ -41,6 +42,9 @@ namespace Xbox2Android
 				}
 				if (rootElement.Attribute("TriggerTripleValue") != null) {
 					TriggerTripleValue = int.Parse(rootElement.Attribute("TriggerTripleValue").Value);
+				}
+				if (rootElement.Attribute("IsHotKey") != null) {
+					IsHotKey = bool.Parse(rootElement.Attribute("IsHotKey").Value);
 				}
 				if (rootElement.Attribute("IsReverseAxis") != null) {
 					IsReverseAxis = bool.Parse(rootElement.Attribute("IsReverseAxis").Value);
@@ -81,6 +85,7 @@ namespace Xbox2Android
 				rootElement.SetAttributeValue("TriggerHappyValue", TriggerHappyValue);
 				rootElement.SetAttributeValue("TriggerDoubleValue", TriggerDoubleValue);
 				rootElement.SetAttributeValue("TriggerTripleValue", TriggerTripleValue);
+				rootElement.SetAttributeValue("IsHotKey", IsHotKey);
 				rootElement.SetAttributeValue("IsReverseAxis", IsReverseAxis);
 				rootElement.SetAttributeValue("IsSnapAxis", IsSnapAxis);
 				rootElement.SetAttributeValue("Is8Axis", Is8Axis);

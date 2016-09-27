@@ -32,6 +32,7 @@ namespace Xbox2Android
 					triggerModeTriple.IsChecked = true;
 					break;
 			}
+			checkHotKey.IsChecked = ProgramSettings.IsHotKey;
 			checkReverseAxis.IsChecked = ProgramSettings.IsReverseAxis;
 			check8Axis.IsChecked = ProgramSettings.Is8Axis;
 			checkSnapAxis.IsChecked = ProgramSettings.IsSnapAxis;
@@ -43,6 +44,10 @@ namespace Xbox2Android
 
 		private void KeyboardHook_KeyPressed(object sender, Native.KeyboardHook.KeyEventArgs e)
 		{
+			if (!ProgramSettings.IsHotKey) {
+				return;
+			}
+
 			Dispatcher.InvokeAsync(() => {
 				switch (e.Key) {
 					case Key.NumPad7:
@@ -183,6 +188,13 @@ tagRetry:
 				ProgramSettings.TriggerMode = 2;
 				ProgramSettings.TriggerTripleValue = triggerModeTriple.Value;
 				m_timer.Change(RightTriggerAction.ActionInterval[2][ProgramSettings.TriggerTripleValue]);
+			}
+		}
+
+		void CheckHotKey_OnCheckedChanged(object sender, RoutedEventArgs e)
+		{
+			if (!IsLoading) {
+				ProgramSettings.IsHotKey = checkHotKey.IsChecked == true;
 			}
 		}
 

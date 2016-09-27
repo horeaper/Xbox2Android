@@ -40,9 +40,15 @@
 		</Grid.RowDefinitions>
 
 		<Menu Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+			<Menu.ItemsPanel>
+				<ItemsPanelTemplate>
+					<DockPanel HorizontalAlignment="Stretch"/>
+				</ItemsPanelTemplate>
+			</Menu.ItemsPanel>
 			<MenuItem Header="Touch Profile" Margin="2" Click="MenuTouchProfile_OnClick" />
 			<MenuItem x:Name="menuLocalIPs" Header="Local IPs" Margin="2"  />
-			<MenuItem Header="Exit" Margin="2" Click="MenuExit_OnClick" />
+			<CheckBox x:Name="checkHotKey" Content="HotKey" Margin="2" Checked="CheckHotKey_OnCheckedChanged" Unchecked="CheckHotKey_OnCheckedChanged" />
+			<MenuItem Header="Exit" Margin="2" HorizontalAlignment="Right" Click="MenuExit_OnClick" />
 		</Menu>
 
 		<TextBlock Text="Clients" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,5,0,0" />
