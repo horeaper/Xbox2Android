@@ -38,6 +38,57 @@ namespace Xbox2Android
 			IsLoading = false;
 			CreateNotifyIcon();
 			StartServer();
+			Native.KeyboardHook.KeyPressed += KeyboardHook_KeyPressed;
+		}
+
+		private void KeyboardHook_KeyPressed(object sender, Native.KeyboardHook.KeyEventArgs e)
+		{
+			Dispatcher.InvokeAsync(() => {
+				switch (e.Key) {
+					case Key.NumPad7:
+						triggerModeHappy.Value = 0;
+						triggerModeHappy.IsChecked = true;
+						break;
+					case Key.NumPad8:
+					case Key.NumPad9:
+						triggerModeHappy.Value = 1;
+						triggerModeHappy.IsChecked = true;
+						break;
+					case Key.NumPad4:
+						triggerModeDouble.Value = 0;
+						triggerModeDouble.IsChecked = true;
+						break;
+					case Key.NumPad5:
+						triggerModeDouble.Value = 1;
+						triggerModeDouble.IsChecked = true;
+						break;
+					case Key.NumPad6:
+						triggerModeDouble.Value = 2;
+						triggerModeDouble.IsChecked = true;
+						break;
+					case Key.NumPad1:
+						triggerModeTriple.Value = 0;
+						triggerModeTriple.IsChecked = true;
+						break;
+					case Key.NumPad2:
+						triggerModeTriple.Value = 1;
+						triggerModeTriple.IsChecked = true;
+						break;
+					case Key.NumPad3:
+						triggerModeTriple.Value = 2;
+						triggerModeTriple.IsChecked = true;
+						break;
+					case Key.NumPad0:
+						{
+							if (listClients.Items.Count > 0) {
+								int index = listClients.SelectedIndex + 1;
+								index %= listClients.Items.Count;
+								listClients.SelectedIndex = index;
+							}
+						}
+						break;
+				}
+			});
 		}
 
 		private void MainWindow_Loaded(object sender, RoutedEventArgs e)
