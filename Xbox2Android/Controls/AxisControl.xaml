@@ -19,11 +19,15 @@
 						<TextBlock Text="Radius" Margin="0,0,5,0" />
 						<TextBox x:Name="textAxisRadius" Width="50" TextChanged="TextAxisRadius_TextChanged" />
 					</StackPanel>
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="Shadow Offset" Margin="0,0,5,0" />
-						<TextBox x:Name="textShadowAxisOffset" Width="50" TextChanged="TextShadowAxisOffset_TextChanged" />
-					</StackPanel>
-					<MenuItem x:Name="menuShowShadowAxis" Header="Show Shadow Axis" IsChecked="False" Click="MenuShowShadowAxis_Click" />
+					<MenuItem x:Name="menuUseShadowAxis" Header="Use Shadow Axis" IsChecked="False" Click="MenuUseShadowAxis_Click" />
+					<MenuItem x:Name="menuShadowAxis" Visibility="Collapsed">
+						<MenuItem.Header>
+							<StackPanel Orientation="Horizontal">
+								<TextBlock Text="Shadow Offset" Margin="0,0,5,0" />
+								<TextBox x:Name="textShadowAxisOffset" Width="50" TextChanged="TextShadowAxisOffset_TextChanged" />
+							</StackPanel>
+						</MenuItem.Header>
+					</MenuItem>
 					<Separator />
 					<MenuItem Header="Remove" Click="MenuRemove_Click" />
 				</ContextMenu>

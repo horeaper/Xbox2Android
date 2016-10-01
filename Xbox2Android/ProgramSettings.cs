@@ -6,10 +6,13 @@ namespace Xbox2Android
 {
 	static class ProgramSettings
 	{
+		public static string BackgroundImage;
+
 		public static int TriggerMode;
 		public static int TriggerHappyValue;
 		public static int TriggerDoubleValue;
 		public static int TriggerTripleValue;
+
 		public static bool IsHotKey;
 		public static bool IsReverseAxis;
 		public static bool IsSnapAxis;
@@ -17,9 +20,7 @@ namespace Xbox2Android
 
 		public static Point? AxisCenter;
 		public static int AxisRadius = 120;
-		public static int ShadowAxisOffset = -8;
-
-		public static string BackgroundImage;
+		public static int? ShadowAxisOffset;
 		public static List<Point>[] ButtonPositions = new List<Point>[Constants.ButtonCount];
 
 		public static void Load()
@@ -30,6 +31,8 @@ namespace Xbox2Android
 			try {
 				var doc = XDocument.Load("InputSettings.xml");
 				var rootElement = doc.Root;
+
+				BackgroundImage = rootElement.Attribute("BackgroundImage").Value;
 
 				if (rootElement.Attribute("TriggerMode") != null) {
 					TriggerMode = int.Parse(rootElement.Attribute("TriggerMode").Value);
@@ -43,6 +46,7 @@ namespace Xbox2Android
 				if (rootElement.Attribute("TriggerTripleValue") != null) {
 					TriggerTripleValue = int.Parse(rootElement.Attribute("TriggerTripleValue").Value);
 				}
+
 				if (rootElement.Attribute("IsHotKey") != null) {
 					IsHotKey = bool.Parse(rootElement.Attribute("IsHotKey").Value);
 				}
@@ -60,9 +64,9 @@ namespace Xbox2Android
 					AxisCenter = Point.Parse(rootElement.Attribute("AxisCenter").Value);
 				}
 				AxisRadius = int.Parse(rootElement.Attribute("AxisRadius").Value);
-				ShadowAxisOffset = int.Parse(rootElement.Attribute("ShadowAxisOffset").Value);
-				BackgroundImage = rootElement.Attribute("BackgroundImage").Value;
-
+				if (rootElement.Attribute("ShadowAxisOffset") != null) {
+					ShadowAxisOffset = int.Parse(rootElement.Attribute("ShadowAxisOffset").Value);
+				}
 				int index = 0;
 				foreach (var buttonElement in rootElement.Elements("Button")) {
 					foreach (var pointElement in buttonElement.Elements("Point")) {
@@ -81,21 +85,25 @@ namespace Xbox2Android
 		{
 			try {
 				var rootElement = new XElement("Settings");
+				rootElement.SetAttributeValue("BackgroundImage", BackgroundImage);
+
 				rootElement.SetAttributeValue("TriggerMode", TriggerMode);
 				rootElement.SetAttributeValue("TriggerHappyValue", TriggerHappyValue);
 				rootElement.SetAttributeValue("TriggerDoubleValue", TriggerDoubleValue);
 				rootElement.SetAttributeValue("TriggerTripleValue", TriggerTripleValue);
+
 				rootElement.SetAttributeValue("IsHotKey", IsHotKey);
 				rootElement.SetAttributeValue("IsReverseAxis", IsReverseAxis);
 				rootElement.SetAttributeValue("IsSnapAxis", IsSnapAxis);
 				rootElement.SetAttributeValue("Is8Axis", Is8Axis);
+
 				if (AxisCenter.HasValue) {
 					rootElement.SetAttributeValue("AxisCenter", AxisCenter.Value);
 				}
 				rootElement.SetAttributeValue("AxisRadius", AxisRadius);
-				rootElement.SetAttributeValue("ShadowAxisOffset", ShadowAxisOffset);
-				rootElement.SetAttributeValue("BackgroundImage", BackgroundImage);
-
+				if (ShadowAxisOffset.HasValue) {
+					rootElement.SetAttributeValue("ShadowAxisOffset", ShadowAxisOffset.Value);
+				}
 				for (int cnt = 0; cnt < Constants.ButtonCount; ++cnt) {
 					var buttonElement = new XElement("Button");
 					foreach (var point in ButtonPositions[cnt]) {

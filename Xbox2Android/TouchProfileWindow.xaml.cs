@@ -150,7 +150,12 @@ namespace Xbox2Android
 			if (m_axisControl != null) {
 				ProgramSettings.AxisCenter = m_axisControl.Location;
 				ProgramSettings.AxisRadius = m_axisControl.AxisRadius;
-				ProgramSettings.ShadowAxisOffset = m_axisControl.ShadowAxisOffset;
+				if (m_axisControl.UseShadowAxis) {
+					ProgramSettings.ShadowAxisOffset = m_axisControl.ShadowAxisOffset;
+				}
+				else {
+					ProgramSettings.ShadowAxisOffset = null;
+				}
 			}
 			for (int index = 0; index < Constants.ButtonCount; ++index) {
 				ProgramSettings.ButtonPositions[index].Clear();

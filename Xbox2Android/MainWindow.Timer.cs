@@ -71,7 +71,7 @@ namespace Xbox2Android
 		}
 
 		bool m_isDirectionInEffect;
-		bool m_isShadowAxis;
+		bool m_isShadowAxisTriggered;
 
 		bool ProcessButton(XInput.Gamepad gamepad)
 		{
@@ -166,14 +166,14 @@ namespace Xbox2Android
 
 					//Shadow axis
 					if (direction.X > 0) {
-						m_isShadowAxis = false;
+						m_isShadowAxisTriggered = false;
 					}
 					else if (direction.X < 0) {
-						m_isShadowAxis = true;
+						m_isShadowAxisTriggered = true;
 					}
 					var axisCenter = ProgramSettings.AxisCenter.Value;
-					if (m_isShadowAxis) {
-						axisCenter.X += ProgramSettings.ShadowAxisOffset;
+					if (m_isShadowAxisTriggered && ProgramSettings.ShadowAxisOffset.HasValue) {
+						axisCenter.X += ProgramSettings.ShadowAxisOffset.Value;
 					}
 
 					//Output

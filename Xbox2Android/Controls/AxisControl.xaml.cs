@@ -16,15 +16,19 @@ namespace Xbox2Android.Controls
 			InitializeComponent();
 			shapeBackground.Fill = UnselectedBrush;
 			textAxisRadius.Text = ProgramSettings.AxisRadius.ToString();
-			textShadowAxisOffset.Text = ProgramSettings.ShadowAxisOffset.ToString();
 		}
 
 		private void AxisControl_OnLoaded(object sender, RoutedEventArgs e)
 		{
-			if (ProgramSettings.ShadowAxisOffset != 0) {
-				menuShowShadowAxis.IsChecked = true;
+			if (ProgramSettings.ShadowAxisOffset.HasValue && ProgramSettings.ShadowAxisOffset.Value != 0) {
+				menuUseShadowAxis.IsChecked = true;
+				menuShadowAxis.Visibility = Visibility.Visible;
+				textShadowAxisOffset.Text = ProgramSettings.ShadowAxisOffset.Value.ToString();
 				shapeShadowAxisIn.Visibility = Visibility.Visible;
 				shapeShadowAxisOut.Visibility = Visibility.Visible;
+			}
+			else {
+				textShadowAxisOffset.Text = "-8";
 			}
 		}
 
@@ -51,6 +55,8 @@ namespace Xbox2Android.Controls
 				matrixTranslate.Y = -value;
 			}
 		}
+
+		public bool UseShadowAxis => menuUseShadowAxis.IsChecked;
 
 		public int ShadowAxisOffset
 		{
@@ -85,11 +91,12 @@ namespace Xbox2Android.Controls
 			}
 		}
 
-		private void MenuShowShadowAxis_Click(object sender, RoutedEventArgs e)
+		private void MenuUseShadowAxis_Click(object sender, RoutedEventArgs e)
 		{
-			menuShowShadowAxis.IsChecked = !menuShowShadowAxis.IsChecked;
-			shapeShadowAxisIn.Visibility = menuShowShadowAxis.IsChecked ? Visibility.Visible : Visibility.Collapsed;
-			shapeShadowAxisOut.Visibility = menuShowShadowAxis.IsChecked ? Visibility.Visible : Visibility.Collapsed;
+			menuUseShadowAxis.IsChecked = !menuUseShadowAxis.IsChecked;
+			menuShadowAxis.Visibility = menuUseShadowAxis.IsChecked ? Visibility.Visible : Visibility.Collapsed;
+			shapeShadowAxisIn.Visibility = menuUseShadowAxis.IsChecked ? Visibility.Visible : Visibility.Collapsed;
+			shapeShadowAxisOut.Visibility = menuUseShadowAxis.IsChecked ? Visibility.Visible : Visibility.Collapsed;
 		}
 	}
 }
