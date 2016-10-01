@@ -51,10 +51,10 @@ namespace Xbox2Android
 			Dispatcher.InvokeAsync(() => {
 				switch (e.Key) {
 					case Key.NumPad7:
+					case Key.NumPad8:
 						triggerModeHappy.Value = 0;
 						triggerModeHappy.IsChecked = true;
 						break;
-					case Key.NumPad8:
 					case Key.NumPad9:
 						triggerModeHappy.Value = 1;
 						triggerModeHappy.IsChecked = true;
