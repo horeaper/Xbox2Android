@@ -11,19 +11,16 @@ namespace Xbox2Android.Controls
 		public static readonly SolidColorBrush UnselectedBrush = new SolidColorBrush(Color.FromArgb(128, 0, 255, 255));
 		public static readonly SolidColorBrush SelectedBrush = new SolidColorBrush(Color.FromArgb(192, 0, 192, 192));
 
-		public AxisControl()
+		public AxisControl(TouchProfile profile)
 		{
 			InitializeComponent();
 			shapeBackground.Fill = UnselectedBrush;
-			textAxisRadius.Text = ProgramSettings.AxisRadius.ToString();
-		}
+			textAxisRadius.Text = profile.AxisRadius.ToString();
 
-		private void AxisControl_OnLoaded(object sender, RoutedEventArgs e)
-		{
-			if (ProgramSettings.ShadowAxisOffset.HasValue && ProgramSettings.ShadowAxisOffset.Value != 0) {
+			if (profile.ShadowAxisOffset.HasValue && profile.ShadowAxisOffset.Value != 0) {
 				menuUseShadowAxis.IsChecked = true;
 				menuShadowAxis.Visibility = Visibility.Visible;
-				textShadowAxisOffset.Text = ProgramSettings.ShadowAxisOffset.Value.ToString();
+				textShadowAxisOffset.Text = profile.ShadowAxisOffset.Value.ToString();
 				shapeShadowAxisIn.Visibility = Visibility.Visible;
 				shapeShadowAxisOut.Visibility = Visibility.Visible;
 			}

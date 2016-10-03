@@ -78,7 +78,7 @@ namespace Xbox2Android
 			}
 		}
 
-		public static void FrameUpdate(MainWindow.ClientParam selectedClient, Action<MainWindow.ClientParam, byte[]> fnSendData)
+		public static void FrameUpdate(TouchProfile profile, MainWindow.ClientParam selectedClient, Action<MainWindow.ClientParam, byte[]> fnSendData)
 		{
 			if (m_isDataDirty) {
 				m_dataBuffer.Clear();
@@ -87,7 +87,7 @@ namespace Xbox2Android
 				}
 				for (int cnt = 0; cnt < Constants.ButtonCount; ++cnt) {
 					if (m_isButtonDown[cnt]) {
-						m_dataBuffer.AddRange(ProgramSettings.ButtonPositions[cnt]);
+						m_dataBuffer.AddRange(profile.ButtonPositions[cnt]);
 					}
 				}
 

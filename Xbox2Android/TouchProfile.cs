@@ -4,35 +4,41 @@ using System.Xml.Linq;
 
 namespace Xbox2Android
 {
-	static class ProgramSettings
+	public class TouchProfile
 	{
-		public static string BackgroundImage;
+		public string Name;
+		public string BackgroundImage;
 
-		public static int TriggerMode;
-		public static int TriggerHappyValue;
-		public static int TriggerDoubleValue;
-		public static int TriggerTripleValue;
+		public int TriggerMode;
+		public int TriggerHappyValue;
+		public int TriggerDoubleValue;
+		public int TriggerTripleValue;
 
-		public static bool IsHotKey;
-		public static bool IsReverseAxis;
-		public static bool IsSnapAxis;
-		public static bool Is8Axis;
+		public bool IsReverseAxis;
+		public bool IsSnapAxis;
+		public bool Is8Axis;
 
-		public static Point? AxisCenter;
-		public static int AxisRadius = 120;
-		public static int? ShadowAxisOffset;
-		public static List<Point>[] ButtonPositions = new List<Point>[Constants.ButtonCount];
+		public Point? AxisCenter;
+		public int AxisRadius = 120;
+		public int? ShadowAxisOffset;
+		public List<Point>[] ButtonPositions = new List<Point>[Constants.ButtonCount];
 
-		public static void Load()
+		public TouchProfile()
 		{
 			for (int cnt = 0; cnt < Constants.ButtonCount; ++cnt) {
 				ButtonPositions[cnt] = new List<Point>();
 			}
-			try {
-				var doc = XDocument.Load("InputSettings.xml");
-				var rootElement = doc.Root;
+		}
 
-				BackgroundImage = rootElement.Attribute("BackgroundImage").Value;
+		public bool Load(XElement rootElement)
+		{
+			try {
+				if (rootElement.Attribute("Name") != null) {
+					Name = rootElement.Attribute("Name").Value;
+				}
+				if (rootElement.Attribute("BackgroundImage") != null) {
+					BackgroundImage = rootElement.Attribute("BackgroundImage").Value;
+				}
 
 				if (rootElement.Attribute("TriggerMode") != null) {
 					TriggerMode = int.Parse(rootElement.Attribute("TriggerMode").Value);
@@ -47,9 +53,6 @@ namespace Xbox2Android
 					TriggerTripleValue = int.Parse(rootElement.Attribute("TriggerTripleValue").Value);
 				}
 
-				if (rootElement.Attribute("IsHotKey") != null) {
-					IsHotKey = bool.Parse(rootElement.Attribute("IsHotKey").Value);
-				}
 				if (rootElement.Attribute("IsReverseAxis") != null) {
 					IsReverseAxis = bool.Parse(rootElement.Attribute("IsReverseAxis").Value);
 				}
@@ -75,16 +78,21 @@ namespace Xbox2Android
 					}
 					++index;
 				}
+
+				return true;
 			}
 			catch {
-				// ignored
+				return false;
 			}
 		}
 
-		public static bool Save()
+		public XElement Save()
 		{
 			try {
 				var rootElement = new XElement("Settings");
+				if (Name != null) {
+					rootElement.SetAttributeValue("Name", Name);
+				}
 				rootElement.SetAttributeValue("BackgroundImage", BackgroundImage);
 
 				rootElement.SetAttributeValue("TriggerMode", TriggerMode);
@@ -92,7 +100,6 @@ namespace Xbox2Android
 				rootElement.SetAttributeValue("TriggerDoubleValue", TriggerDoubleValue);
 				rootElement.SetAttributeValue("TriggerTripleValue", TriggerTripleValue);
 
-				rootElement.SetAttributeValue("IsHotKey", IsHotKey);
 				rootElement.SetAttributeValue("IsReverseAxis", IsReverseAxis);
 				rootElement.SetAttributeValue("IsSnapAxis", IsSnapAxis);
 				rootElement.SetAttributeValue("Is8Axis", Is8Axis);
@@ -114,15 +121,18 @@ namespace Xbox2Android
 					rootElement.Add(buttonElement);
 				}
 
-				var doc = new XDocument();
-				doc.Add(rootElement);
-				doc.Save("InputSettings.xml");
+				return rootElement;
 			}
 			catch {
-				return false;
+				return null;
 			}
+		}
 
-			return true;
+		public void AssignIfNoName(int index)
+		{
+			if (string.IsNullOrEmpty(Name)) {
+				Name = index.ToString();
+			}
 		}
 	}
 }

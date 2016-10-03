@@ -4,7 +4,7 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		mc:Ignorable="d"
-		Title="Right click for menu" Width="300" Height="300" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" SizeToContent="WidthAndHeight" MinWidth="320" MinHeight="240">
+		Title="Right click for menu" Width="300" Height="300" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" SizeToContent="WidthAndHeight" WindowStyle="ToolWindow" MinWidth="320" MinHeight="240">
 	<Window.Resources>
 	</Window.Resources>
 
@@ -20,9 +20,7 @@
 					<MenuItem Header="X" Click="SetControllerButton_Click" />
 					<MenuItem Header="Y" Click="SetControllerButton_Click" />
 					<MenuItem Header="LeftShoulder" Click="SetControllerButton_Click" />
-					<MenuItem Header="LeftTrigger" Click="SetControllerLeftTrigger_Click" />
 					<MenuItem Header="RightShoulder" Click="SetControllerButton_Click" />
-					<MenuItem Header="RightTrigger" Click="SetControllerRightTrigger_Click" />
 					<MenuItem Header="Back" Click="SetControllerButton_Click" />
 					<MenuItem Header="Start" Click="SetControllerButton_Click" />
 					<MenuItem Header="DPadUp" Click="SetControllerButton_Click" />

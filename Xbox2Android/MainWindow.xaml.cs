@@ -16,27 +16,7 @@ namespace Xbox2Android
 		{
 			InitializeComponent();
 
-			ProgramSettings.Load();
-			IsLoading = true;
-			triggerModeHappy.Value = ProgramSettings.TriggerHappyValue;
-			triggerModeDouble.Value = ProgramSettings.TriggerDoubleValue;
-			triggerModeTriple.Value = ProgramSettings.TriggerTripleValue;
-			switch (ProgramSettings.TriggerMode) {
-				case 0:
-					triggerModeHappy.IsChecked = true;
-					break;
-				case 1:
-					triggerModeDouble.IsChecked = true;
-					break;
-				case 2:
-					triggerModeTriple.IsChecked = true;
-					break;
-			}
-			checkHotKey.IsChecked = ProgramSettings.IsHotKey;
-			checkReverseAxis.IsChecked = ProgramSettings.IsReverseAxis;
-			check8Axis.IsChecked = ProgramSettings.Is8Axis;
-			checkSnapAxis.IsChecked = ProgramSettings.IsSnapAxis;
-			IsLoading = false;
+			LoadSettings();
 			CreateNotifyIcon();
 			StartServer();
 			Native.KeyboardHook.KeyPressed += KeyboardHook_KeyPressed;
@@ -44,7 +24,7 @@ namespace Xbox2Android
 
 		private void KeyboardHook_KeyPressed(object sender, Native.KeyboardHook.KeyEventArgs e)
 		{
-			if (!ProgramSettings.IsHotKey) {
+			if (m_currentProfile == -1) {
 				return;
 			}
 
@@ -98,15 +78,19 @@ namespace Xbox2Android
 
 		private void MainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			switch (ProgramSettings.TriggerMode) {
+			if (m_currentProfile == -1) {
+				return;
+			}
+
+			switch (m_profiles[m_currentProfile].TriggerMode) {
 				case 0:
-					m_timer = new ThreadTimer(Timer_Tick, RightTriggerAction.ActionInterval[0][ProgramSettings.TriggerHappyValue]);
+					m_timer = new ThreadTimer(Timer_Tick, RightTriggerAction.ActionInterval[0][m_profiles[m_currentProfile].TriggerHappyValue]);
 					break;
 				case 1:
-					m_timer = new ThreadTimer(Timer_Tick, RightTriggerAction.ActionInterval[1][ProgramSettings.TriggerDoubleValue]);
+					m_timer = new ThreadTimer(Timer_Tick, RightTriggerAction.ActionInterval[1][m_profiles[m_currentProfile].TriggerDoubleValue]);
 					break;
 				case 2:
-					m_timer = new ThreadTimer(Timer_Tick, RightTriggerAction.ActionInterval[2][ProgramSettings.TriggerTripleValue]);
+					m_timer = new ThreadTimer(Timer_Tick, RightTriggerAction.ActionInterval[2][m_profiles[m_currentProfile].TriggerTripleValue]);
 					break;
 			}
 
@@ -122,7 +106,7 @@ namespace Xbox2Android
 			m_notifyIcon.Visible = false;
 
 tagRetry:
-			if (!ProgramSettings.Save()) {
+			if (!SaveSettings()) {
 				var result = MessageBox.Show(this, "Cannot save program settings. Retry?", "Xbox Input Mapper", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
 				if (result == MessageBoxResult.Yes) {
 					goto tagRetry;
@@ -143,11 +127,6 @@ tagRetry:
 			this.Opacity = 0.5;
 		}
 
-		void MenuTouchProfile_OnClick(object sender, RoutedEventArgs e)
-		{
-			new TouchProfileWindow(this).ShowDialog();
-		}
-
 		void MenuExit_OnClick(object sender, RoutedEventArgs e)
 		{
 			Close();
@@ -163,9 +142,9 @@ tagRetry:
 			if (!IsLoading) {
 				triggerModeDouble.IsChecked = false;
 				triggerModeTriple.IsChecked = false;
-				ProgramSettings.TriggerMode = 0;
-				ProgramSettings.TriggerHappyValue = triggerModeHappy.Value;
-				m_timer.Change(RightTriggerAction.ActionInterval[0][ProgramSettings.TriggerHappyValue]);
+				m_profiles[m_currentProfile].TriggerMode = 0;
+				m_profiles[m_currentProfile].TriggerHappyValue = triggerModeHappy.Value;
+				m_timer.Change(RightTriggerAction.ActionInterval[0][m_profiles[m_currentProfile].TriggerHappyValue]);
 			}
 		}
 
@@ -174,9 +153,9 @@ tagRetry:
 			if (!IsLoading) {
 				triggerModeHappy.IsChecked = false;
 				triggerModeTriple.IsChecked = false;
-				ProgramSettings.TriggerMode = 1;
-				ProgramSettings.TriggerDoubleValue = triggerModeDouble.Value;
-				m_timer.Change(RightTriggerAction.ActionInterval[1][ProgramSettings.TriggerDoubleValue]);
+				m_profiles[m_currentProfile].TriggerMode = 1;
+				m_profiles[m_currentProfile].TriggerDoubleValue = triggerModeDouble.Value;
+				m_timer.Change(RightTriggerAction.ActionInterval[1][m_profiles[m_currentProfile].TriggerDoubleValue]);
 			}
 		}
 
@@ -185,37 +164,30 @@ tagRetry:
 			if (!IsLoading) {
 				triggerModeHappy.IsChecked = false;
 				triggerModeDouble.IsChecked = false;
-				ProgramSettings.TriggerMode = 2;
-				ProgramSettings.TriggerTripleValue = triggerModeTriple.Value;
-				m_timer.Change(RightTriggerAction.ActionInterval[2][ProgramSettings.TriggerTripleValue]);
-			}
-		}
-
-		void CheckHotKey_OnCheckedChanged(object sender, RoutedEventArgs e)
-		{
-			if (!IsLoading) {
-				ProgramSettings.IsHotKey = checkHotKey.IsChecked == true;
+				m_profiles[m_currentProfile].TriggerMode = 2;
+				m_profiles[m_currentProfile].TriggerTripleValue = triggerModeTriple.Value;
+				m_timer.Change(RightTriggerAction.ActionInterval[2][m_profiles[m_currentProfile].TriggerTripleValue]);
 			}
 		}
 
 		void checkReverseAxis_OnCheckedChanged(object sender, RoutedEventArgs e)
 		{
 			if (!IsLoading) {
-				ProgramSettings.IsReverseAxis = checkReverseAxis.IsChecked == true;
+				m_profiles[m_currentProfile].IsReverseAxis = checkReverseAxis.IsChecked == true;
 			}
 		}
 
 		void checkSnapAxis_OnCheckedChanged(object sender, RoutedEventArgs e)
 		{
 			if (!IsLoading) {
-				ProgramSettings.IsSnapAxis = checkSnapAxis.IsChecked == true;
+				m_profiles[m_currentProfile].IsSnapAxis = checkSnapAxis.IsChecked == true;
 			}
 		}
 
 		void check8Axis_OnCheckedChanged(object sender, RoutedEventArgs e)
 		{
 			if (!IsLoading) {
-				ProgramSettings.Is8Axis = check8Axis.IsChecked == true;
+				m_profiles[m_currentProfile].Is8Axis = check8Axis.IsChecked == true;
 			}
 		}
 	}

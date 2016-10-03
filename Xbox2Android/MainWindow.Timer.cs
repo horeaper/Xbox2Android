@@ -9,7 +9,7 @@ namespace Xbox2Android
 		const int ThumbDeadzone = short.MaxValue / 2;
 		const int TriggerDeadzone = byte.MaxValue / 2;
 		XInput.Gamepad m_previousGamepad;
-		bool m_isTriggerDown = false;
+		bool m_isTriggerDown;
 
 		void ResetGamepadState()
 		{
@@ -20,30 +20,32 @@ namespace Xbox2Android
 		private void Timer_Tick()
 		{
 			XInput.State state;
-			if (XInput.GetState(0, out state) == XInput.ErrorSuccess) {
+			if (m_currentProfile != -1 && XInput.GetState(0, out state) == XInput.ErrorSuccess) {
+				var profile = m_profiles[m_currentProfile];
+
 				int triggerValue = 0;
-				switch (ProgramSettings.TriggerMode) {
+				switch (profile.TriggerMode) {
 					case 0:
-						triggerValue = ProgramSettings.TriggerHappyValue;
+						triggerValue = profile.TriggerHappyValue;
 						break;
 					case 1:
-						triggerValue = ProgramSettings.TriggerDoubleValue;
+						triggerValue = profile.TriggerDoubleValue;
 						break;
 					case 2:
-						triggerValue = ProgramSettings.TriggerTripleValue;
+						triggerValue = profile.TriggerTripleValue;
 						break;
 				}
 
 				//Button
-				if (!ProcessButton(state.Gamepad)) {
+				if (!ProcessButton(profile, state.Gamepad)) {
 					//If button is not handled, process trigger
 					if (state.Gamepad.RightTrigger > TriggerDeadzone) {
-						RightTriggerAction.TriggerDown(ProgramSettings.TriggerMode, triggerValue);
+						RightTriggerAction.TriggerDown(profile.TriggerMode, triggerValue);
 						m_isTriggerDown = true;
 					}
 					else {
 						if (m_previousGamepad.RightTrigger > TriggerDeadzone) {
-							RightTriggerAction.TriggerUp(ProgramSettings.TriggerMode, triggerValue);
+							RightTriggerAction.TriggerUp(profile.TriggerMode, triggerValue);
 							m_isTriggerDown = false;
 						}
 					}
@@ -51,18 +53,18 @@ namespace Xbox2Android
 				else {
 					//If button is pressed while trigger is still processing, cancel it
 					if (m_isTriggerDown) {
-						RightTriggerAction.TriggerUp(ProgramSettings.TriggerMode, triggerValue);
+						RightTriggerAction.TriggerUp(profile.TriggerMode, triggerValue);
 						m_isTriggerDown = false;
 					}
 				}
 
 				//Axis
-				ProcessAxis(state.Gamepad);
+				ProcessAxis(profile, state.Gamepad);
 
 				//Refresh
 				m_previousGamepad = state.Gamepad;
 				if (m_selectedClient != null) {
-					InputMapper.FrameUpdate(m_selectedClient, SendData);
+					InputMapper.FrameUpdate(profile, m_selectedClient, SendData);
 				}
 			}
 			else {
@@ -73,7 +75,7 @@ namespace Xbox2Android
 		bool m_isDirectionInEffect;
 		bool m_isShadowAxisTriggered;
 
-		bool ProcessButton(XInput.Gamepad gamepad)
+		bool ProcessButton(TouchProfile profile, XInput.Gamepad gamepad)
 		{
 			bool isHandled = false;
 			for (int buttonId = 0; buttonId < Constants.ButtonValue.Length; ++buttonId) {
@@ -95,15 +97,15 @@ namespace Xbox2Android
 			return isHandled;
 		}
 
-		void ProcessAxis(XInput.Gamepad gamepad)
+		void ProcessAxis(TouchProfile profile, XInput.Gamepad gamepad)
 		{
-			if (ProgramSettings.AxisCenter.HasValue && ProgramSettings.AxisRadius > 0) {
+			if (profile.AxisCenter.HasValue && profile.AxisRadius > 0) {
 				var direction = new Vector(gamepad.ThumbLX, gamepad.ThumbLY);
 				if (direction.Length <= ThumbDeadzone) {
 					direction.X = 0;
 					direction.Y = 0;
 				}
-				if (ProgramSettings.IsSnapAxis) {
+				if (profile.IsSnapAxis) {
 					if (Math.Abs(direction.X) <= short.MaxValue / 3.0) {
 						direction.X = 0;
 					}
@@ -119,7 +121,7 @@ namespace Xbox2Android
 				}
 				else {
 					//8-axis
-					if (ProgramSettings.Is8Axis) {
+					if (profile.Is8Axis) {
 						var angle = Math.Abs(Math.Atan(direction.Y / direction.X) * (180 / Math.PI));
 						if (angle > 0 && angle <= 22.5) {
 							angle = 0;
@@ -156,10 +158,10 @@ namespace Xbox2Android
 
 					//Normalize
 					direction.Normalize();
-					direction *= ProgramSettings.AxisRadius;
+					direction *= profile.AxisRadius;
 
 					//Reverse axis
-					if (ProgramSettings.IsReverseAxis) {
+					if (profile.IsReverseAxis) {
 						direction.X = -direction.X;
 						direction.Y = -direction.Y;
 					}
@@ -171,9 +173,9 @@ namespace Xbox2Android
 					else if (direction.X < 0) {
 						m_isShadowAxisTriggered = true;
 					}
-					var axisCenter = ProgramSettings.AxisCenter.Value;
-					if (m_isShadowAxisTriggered && ProgramSettings.ShadowAxisOffset.HasValue) {
-						axisCenter.X += ProgramSettings.ShadowAxisOffset.Value;
+					var axisCenter = profile.AxisCenter.Value;
+					if (m_isShadowAxisTriggered && profile.ShadowAxisOffset.HasValue) {
+						axisCenter.X += profile.ShadowAxisOffset.Value;
 					}
 
 					//Output

@@ -14,33 +14,34 @@ namespace Xbox2Android
 {
 	sealed partial class TouchProfileWindow : Window
 	{
+		public TouchProfile Profile { get; }
+
 		AxisControl m_axisControl;
 		List<ButtonControl>[] m_buttonControls = new List<ButtonControl>[Constants.ButtonCount];
-		List<ButtonControl> m_leftTriggerControls = new List<ButtonControl>();
-		List<ButtonControl> m_rightTriggerControls = new List<ButtonControl>();
 
 		string m_backgroundImage;
 		Point m_mouseRightClickPoint;
 		Vector m_mouseDragOffset;
 
-		public TouchProfileWindow(Window owner)
+		public TouchProfileWindow(Window owner, TouchProfile profile)
 		{
-			Owner = owner;
 			InitializeComponent();
+			Owner = owner;
+			Profile = profile;
 			for (int index = 0; index < Constants.ButtonCount; ++index) {
 				m_buttonControls[index] = new List<ButtonControl>();
 			}
 
-			if (!string.IsNullOrEmpty(ProgramSettings.BackgroundImage)) {
-				m_backgroundImage = ProgramSettings.BackgroundImage;
+			if (!string.IsNullOrEmpty(Profile.BackgroundImage)) {
+				m_backgroundImage = Profile.BackgroundImage;
 				LoadBackgroundImage();
 			}
-			if (ProgramSettings.AxisCenter.HasValue) {
+			if (Profile.AxisCenter.HasValue) {
 				AddAxisControlToCanvas();
-				m_axisControl.Location = ProgramSettings.AxisCenter.Value;
+				m_axisControl.Location = Profile.AxisCenter.Value;
 			}
 			for (int index = 0; index < Constants.ButtonCount; ++index) {
-				foreach (var point in ProgramSettings.ButtonPositions[index]) {
+				foreach (var point in Profile.ButtonPositions[index]) {
 					AddButtonControlToCanvas(new ButtonControl(Constants.ButtonDisplayName[index], point), m_buttonControls[index]);
 				}
 			}
@@ -69,7 +70,7 @@ namespace Xbox2Android
 
 		void AddAxisControlToCanvas()
 		{
-			m_axisControl = new AxisControl();
+			m_axisControl = new AxisControl(Profile);
 			m_axisControl.MouseDown += IDisplayControl_MouseDown;
 			m_axisControl.MouseUp += IDisplayControl_MouseUp;
 			m_axisControl.RemoveClicked += AxisControl_RemoveClicked;
@@ -94,7 +95,7 @@ namespace Xbox2Android
 			if (m_axisControl != null) {
 				m_axisControl.IsSelected = false;
 			}
-			foreach (var control in m_buttonControls.SelectMany(items => items).Concat(m_leftTriggerControls).Concat(m_rightTriggerControls)) {
+			foreach (var control in m_buttonControls.SelectMany(items => items)) {
 				control.IsSelected = false;
 			}
 		}
@@ -139,34 +140,34 @@ namespace Xbox2Android
 			foreach (var items in m_buttonControls) {
 				items.Clear();
 			}
-			m_leftTriggerControls.Clear();
-			m_rightTriggerControls.Clear();
 			canvasMain.Children.Clear();
 		}
 
 		private void SaveAndExit_Click(object sender, RoutedEventArgs e)
 		{
-			ProgramSettings.BackgroundImage = m_backgroundImage;
+			Profile.BackgroundImage = m_backgroundImage;
 			if (m_axisControl != null) {
-				ProgramSettings.AxisCenter = m_axisControl.Location;
-				ProgramSettings.AxisRadius = m_axisControl.AxisRadius;
+				Profile.AxisCenter = m_axisControl.Location;
+				Profile.AxisRadius = m_axisControl.AxisRadius;
 				if (m_axisControl.UseShadowAxis) {
-					ProgramSettings.ShadowAxisOffset = m_axisControl.ShadowAxisOffset;
+					Profile.ShadowAxisOffset = m_axisControl.ShadowAxisOffset;
 				}
 				else {
-					ProgramSettings.ShadowAxisOffset = null;
+					Profile.ShadowAxisOffset = null;
 				}
 			}
 			for (int index = 0; index < Constants.ButtonCount; ++index) {
-				ProgramSettings.ButtonPositions[index].Clear();
-				ProgramSettings.ButtonPositions[index].AddRange(m_buttonControls[index].Select(control => control.Location));
+				Profile.ButtonPositions[index].Clear();
+				Profile.ButtonPositions[index].AddRange(m_buttonControls[index].Select(control => control.Location));
 			}
 
+			DialogResult = true;
 			Close();
 		}
 
 		private void ExitWithoutSaving_Click(object sender, RoutedEventArgs e)
 		{
+			DialogResult = false;
 			Close();
 		}
 
@@ -184,26 +185,12 @@ namespace Xbox2Android
 			AddButtonControlToCanvas(control, m_buttonControls[buttonId]);
 		}
 
-		private void SetControllerLeftTrigger_Click(object sender, RoutedEventArgs e)
-		{
-			var control = new ButtonControl("LT", m_mouseRightClickPoint);
-			AddButtonControlToCanvas(control, m_leftTriggerControls);
-		}
-
-		private void SetControllerRightTrigger_Click(object sender, RoutedEventArgs e)
-		{
-			var control = new ButtonControl("RT", m_mouseRightClickPoint);
-			AddButtonControlToCanvas(control, m_rightTriggerControls);
-		}
-
 		private void ButtonControl_RemoveClicked(object sender, EventArgs e)
 		{
 			var selectedControl = (ButtonControl)sender;
 			foreach (var items in m_buttonControls) {
 				items.Remove(selectedControl);
 			}
-			m_leftTriggerControls.Remove(selectedControl);
-			m_rightTriggerControls.Remove(selectedControl);
 			canvasMain.Children.Remove(selectedControl);
 		}
 
@@ -220,7 +207,7 @@ namespace Xbox2Android
 					if (m_axisControl != null) {
 						m_axisControl.IsSelected = false;
 					}
-					foreach (var control in m_buttonControls.SelectMany(items => items).Concat(m_leftTriggerControls).Concat(m_rightTriggerControls)) {
+					foreach (var control in m_buttonControls.SelectMany(items => items)) {
 						control.IsSelected = false;
 					}
 					selectedControl.IsSelected = true;

@@ -4,9 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace Xbox2Android
 {

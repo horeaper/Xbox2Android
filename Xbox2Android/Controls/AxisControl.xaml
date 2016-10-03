@@ -4,7 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 mc:Ignorable="d" 
-			 Width="200" Height="200" Loaded="AxisControl_OnLoaded">
+			 Width="200" Height="200">
 	<UserControl.RenderTransform>
 		<TranslateTransform x:Name="matrixTranslate" X="-100" Y="-100" />
 	</UserControl.RenderTransform>
