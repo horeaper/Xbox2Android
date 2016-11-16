@@ -24,6 +24,10 @@ namespace Xbox2AndroidClient
 		string m_name;
 		IPAddress m_ip;
 		string m_inputEventPath;
+		int m_deviceType;
+		int m_width;
+		int m_height;
+
 		Socket m_socket;
 		byte[] m_buffer = new byte[1400];
 
@@ -45,6 +49,9 @@ namespace Xbox2AndroidClient
 				m_name = element.Attribute("Name").Value;
 				m_ip = IPAddress.Parse(element.Attribute("IP").Value);
 				m_inputEventPath = element.Attribute("InputEventPath").Value;
+				m_deviceType = int.Parse(element.Attribute("DeviceType").Value);
+				m_width = int.Parse(element.Attribute("Width").Value);
+				m_height = int.Parse(element.Attribute("Height").Value);
 			}
 			catch {
 				StopSelf();
@@ -104,7 +111,15 @@ namespace Xbox2AndroidClient
 				return;
 			}
 
-			socket.Send(Encoding.UTF8.GetBytes(m_name));
+			var outputBuffer = new MemoryStream();
+			var writer = new BinaryWriter(outputBuffer, Encoding.UTF8);
+			writer.Write(m_name);
+			writer.Write((byte)m_deviceType);
+			writer.Write(m_width);
+			writer.Write(m_height);
+
+			socket.Send(new[] { (byte)outputBuffer.Position });
+			socket.Send(outputBuffer.ToArray());
 			socket.BeginReceive(m_buffer, 0, m_buffer.Length, SocketFlags.None, DataReceivedCallback, socket);
 		}
 

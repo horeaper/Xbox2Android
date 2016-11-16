@@ -21,7 +21,10 @@ namespace Xbox2AndroidClient
 		Button buttonStop;
 
 		public static MainActivity Instance { get; private set; }
-		string m_inputEventPath;
+		string m_inputEventPath = "";
+		int m_deviceType;
+		int m_width;
+		int m_height;
 
 		protected override void OnCreate(Bundle bundle)
 		{
@@ -39,7 +42,7 @@ namespace Xbox2AndroidClient
 			Load();
 			SetServiceRunning(NetworkService.IsRunning);
 			if (string.IsNullOrEmpty(m_inputEventPath)) {
-				m_inputEventPath = GetTouchInputEvent();
+				GetTouchInputEvent();
 			}
 		}
 
@@ -90,6 +93,9 @@ namespace Xbox2AndroidClient
 				textName.Text = element.Attribute("Name").Value;
 				textIP.Text = element.Attribute("IP").Value;
 				m_inputEventPath = element.Attribute("InputEventPath").Value;
+				m_deviceType = int.Parse(element.Attribute("DeviceType").Value);
+				m_width = int.Parse(element.Attribute("Width").Value);
+				m_height = int.Parse(element.Attribute("Height").Value);
 			}
 			catch {
 				// ignored
@@ -102,6 +108,9 @@ namespace Xbox2AndroidClient
 			element.SetAttributeValue("Name", textName.Text);
 			element.SetAttributeValue("IP", textIP.Text);
 			element.SetAttributeValue("InputEventPath", m_inputEventPath);
+			element.SetAttributeValue("DeviceType", m_deviceType);
+			element.SetAttributeValue("Width", m_width);
+			element.SetAttributeValue("Height", m_height);
 			var document = new XDocument(element);
 			var settingPath = Path.Combine(GetExternalFilesDir(null).AbsolutePath, "settings.xml");
 			document.Save(settingPath);
@@ -115,7 +124,7 @@ namespace Xbox2AndroidClient
 			buttonStop.Enabled = isRunning;
 		}
 
-		string GetTouchInputEvent()
+		void GetTouchInputEvent()
 		{
 			var process = Java.Lang.Runtime.GetRuntime().Exec("su");
 			var os = new DataOutputStream(process.OutputStream);
@@ -154,14 +163,26 @@ namespace Xbox2AndroidClient
 
 			string inputDeviceDescription = deviceCollection.FirstOrDefault(text => text.Contains("ABS_MT_POSITION_X") && text.Contains("ABS_MT_POSITION_Y"));
 			if (inputDeviceDescription == null) {
-				return "";
+				return;
 			}
 			var lines = inputDeviceDescription.Split('\n');
 			int colonIndex = lines[0].IndexOf(':');
 			if (colonIndex == -1) {
-				return "";
+				return;
 			}
-			return lines[0].Substring(colonIndex + 1).Trim();
+
+			m_inputEventPath = lines[0].Substring(colonIndex + 1).Trim();
+			m_deviceType = inputDeviceDescription.Contains("ABS_MT_SLOT") ? 1 : 0;
+
+			Func<string, int> fnGetMaxValue = identifier => {
+				string desc = lines.First(text => text.Contains(identifier));
+				int startIndex = desc.IndexOf("max") + 3;
+				int endIndex = desc.IndexOf(',', startIndex);
+				string maxContent = desc.Substring(startIndex, endIndex - startIndex);
+				return int.Parse(maxContent);
+			};
+			m_width = fnGetMaxValue("ABS_MT_POSITION_X");
+			m_height = fnGetMaxValue("ABS_MT_POSITION_Y");
 		}
 	}
 }
