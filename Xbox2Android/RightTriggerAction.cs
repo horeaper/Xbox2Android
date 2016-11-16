@@ -1,4 +1,5 @@
-﻿using Xbox2Android.Native;
+﻿using Xbox2Android.Input;
+using Xbox2Android.Native;
 
 namespace Xbox2Android
 {

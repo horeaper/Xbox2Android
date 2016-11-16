@@ -5,7 +5,7 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:Controls="clr-namespace:Xbox2Android.Controls" x:Class="Xbox2Android.MainWindow"
 		mc:Ignorable="d"
-		Title="Xbox 2 Android" Width="305" Height="130" Opacity="0.5" AllowsTransparency="True" WindowStartupLocation="Manual" ResizeMode="NoResize" Topmost="True" ShowInTaskbar="False" FontFamily="Segoe UI" FontSize="12" Icon="Program.ico"
+		Title="Xbox 2 Android" Width="300" Height="130" Opacity="0.5" AllowsTransparency="True" WindowStartupLocation="Manual" ResizeMode="NoResize" Topmost="True" ShowInTaskbar="False" Icon="Program.ico"
 		Loaded="MainWindow_Loaded" Closing="MainWindow_Closing" WindowStyle="None">
 	<Window.Resources>
 		<Style x:Key="styleListBoxItem" TargetType="ListBoxItem">
@@ -53,6 +53,7 @@
 				<MenuItem x:Name="menuDeleteProfile" Header="Delete" Click="MenuDeleteProfile_OnClick" />
 			</MenuItem>
 			<MenuItem x:Name="menuLocalIPs" Header="Local IPs" Margin="2"  />
+			<CheckBox x:Name="checkHotKey" Content="Hot Key" Checked="CheckHotKey_OnCheckedChanged" Unchecked="CheckHotKey_OnCheckedChanged" />
 			<MenuItem Header="Exit" Margin="2" HorizontalAlignment="Right" Click="MenuExit_OnClick" />
 		</Menu>
 

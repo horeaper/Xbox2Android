@@ -23,10 +23,9 @@ namespace Xbox2Android
 		Point m_mouseRightClickPoint;
 		Vector m_mouseDragOffset;
 
-		public TouchProfileWindow(Window owner, TouchProfile profile)
+		public TouchProfileWindow(TouchProfile profile)
 		{
 			InitializeComponent();
-			Owner = owner;
 			Profile = profile;
 			for (int index = 0; index < Constants.ButtonCount; ++index) {
 				m_buttonControls[index] = new List<ButtonControl>();
@@ -146,6 +145,8 @@ namespace Xbox2Android
 		private void SaveAndExit_Click(object sender, RoutedEventArgs e)
 		{
 			Profile.BackgroundImage = m_backgroundImage;
+			Profile.Width = (int)layoutRoot.ActualWidth;
+			Profile.Height = (int)layoutRoot.ActualHeight;
 			if (m_axisControl != null) {
 				Profile.AxisCenter = m_axisControl.Location;
 				Profile.AxisRadius = m_axisControl.AxisRadius;

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Xbox2Android.Input;
 
 namespace Xbox2Android
 {
@@ -19,12 +20,16 @@ namespace Xbox2Android
 			LoadSettings();
 			CreateNotifyIcon();
 			StartServer();
+			InputMapper.SendDataCallback = SendData;
 			Native.KeyboardHook.KeyPressed += KeyboardHook_KeyPressed;
 		}
 
 		private void KeyboardHook_KeyPressed(object sender, Native.KeyboardHook.KeyEventArgs e)
 		{
-			if (m_currentProfile == -1) {
+			if (m_selectedProfileIndex == -1) {
+				return;
+			}
+			if (!CurrentProfile.IsHotKey) {
 				return;
 			}
 
@@ -78,19 +83,19 @@ namespace Xbox2Android
 
 		private void MainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			if (m_currentProfile == -1) {
+			if (m_selectedProfileIndex == -1) {
 				return;
 			}
 
-			switch (m_profiles[m_currentProfile].TriggerMode) {
+			switch (CurrentProfile.TriggerMode) {
 				case 0:
-					m_timer = new ThreadTimer(Timer_Tick, RightTriggerAction.ActionInterval[0][m_profiles[m_currentProfile].TriggerHappyValue]);
+					m_timer = new ThreadTimer(Timer_Tick, RightTriggerAction.ActionInterval[0][CurrentProfile.TriggerHappyValue]);
 					break;
 				case 1:
-					m_timer = new ThreadTimer(Timer_Tick, RightTriggerAction.ActionInterval[1][m_profiles[m_currentProfile].TriggerDoubleValue]);
+					m_timer = new ThreadTimer(Timer_Tick, RightTriggerAction.ActionInterval[1][CurrentProfile.TriggerDoubleValue]);
 					break;
 				case 2:
-					m_timer = new ThreadTimer(Timer_Tick, RightTriggerAction.ActionInterval[2][m_profiles[m_currentProfile].TriggerTripleValue]);
+					m_timer = new ThreadTimer(Timer_Tick, RightTriggerAction.ActionInterval[2][CurrentProfile.TriggerTripleValue]);
 					break;
 			}
 
@@ -135,6 +140,17 @@ tagRetry:
 		void listClients_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			m_selectedClient = (ClientParam)((ListBoxItem)listClients.SelectedItem)?.Tag;
+			InputMapper.Client = m_selectedClient;
+
+			if (m_selectedClient != null) {
+				for (int index = 0; index < m_profiles.Count; index++) {
+					var profile = m_profiles[index];
+					if (profile.Name == m_selectedClient.Name || m_selectedClient.Name.StartsWith(profile.Name + "-")) {
+						SelectProfileByIndex(index);
+						break;
+					}
+				}
+			}
 		}
 
 		void TriggerModeHappy_OnSelected(object sender, EventArgs e)
@@ -142,9 +158,9 @@ tagRetry:
 			if (!IsLoading) {
 				triggerModeDouble.IsChecked = false;
 				triggerModeTriple.IsChecked = false;
-				m_profiles[m_currentProfile].TriggerMode = 0;
-				m_profiles[m_currentProfile].TriggerHappyValue = triggerModeHappy.Value;
-				m_timer.Change(RightTriggerAction.ActionInterval[0][m_profiles[m_currentProfile].TriggerHappyValue]);
+				CurrentProfile.TriggerMode = 0;
+				CurrentProfile.TriggerHappyValue = triggerModeHappy.Value;
+				m_timer.Change(RightTriggerAction.ActionInterval[0][CurrentProfile.TriggerHappyValue]);
 			}
 		}
 
@@ -153,9 +169,9 @@ tagRetry:
 			if (!IsLoading) {
 				triggerModeHappy.IsChecked = false;
 				triggerModeTriple.IsChecked = false;
-				m_profiles[m_currentProfile].TriggerMode = 1;
-				m_profiles[m_currentProfile].TriggerDoubleValue = triggerModeDouble.Value;
-				m_timer.Change(RightTriggerAction.ActionInterval[1][m_profiles[m_currentProfile].TriggerDoubleValue]);
+				CurrentProfile.TriggerMode = 1;
+				CurrentProfile.TriggerDoubleValue = triggerModeDouble.Value;
+				m_timer.Change(RightTriggerAction.ActionInterval[1][CurrentProfile.TriggerDoubleValue]);
 			}
 		}
 
@@ -164,30 +180,37 @@ tagRetry:
 			if (!IsLoading) {
 				triggerModeHappy.IsChecked = false;
 				triggerModeDouble.IsChecked = false;
-				m_profiles[m_currentProfile].TriggerMode = 2;
-				m_profiles[m_currentProfile].TriggerTripleValue = triggerModeTriple.Value;
-				m_timer.Change(RightTriggerAction.ActionInterval[2][m_profiles[m_currentProfile].TriggerTripleValue]);
+				CurrentProfile.TriggerMode = 2;
+				CurrentProfile.TriggerTripleValue = triggerModeTriple.Value;
+				m_timer.Change(RightTriggerAction.ActionInterval[2][CurrentProfile.TriggerTripleValue]);
+			}
+		}
+
+		void CheckHotKey_OnCheckedChanged(object sender, RoutedEventArgs e)
+		{
+			if (!IsLoading) {
+				CurrentProfile.IsHotKey = checkHotKey.IsChecked == true;
 			}
 		}
 
 		void checkReverseAxis_OnCheckedChanged(object sender, RoutedEventArgs e)
 		{
 			if (!IsLoading) {
-				m_profiles[m_currentProfile].IsReverseAxis = checkReverseAxis.IsChecked == true;
+				CurrentProfile.IsReverseAxis = checkReverseAxis.IsChecked == true;
 			}
 		}
 
 		void checkSnapAxis_OnCheckedChanged(object sender, RoutedEventArgs e)
 		{
 			if (!IsLoading) {
-				m_profiles[m_currentProfile].IsSnapAxis = checkSnapAxis.IsChecked == true;
+				CurrentProfile.IsSnapAxis = checkSnapAxis.IsChecked == true;
 			}
 		}
 
 		void check8Axis_OnCheckedChanged(object sender, RoutedEventArgs e)
 		{
 			if (!IsLoading) {
-				m_profiles[m_currentProfile].Is8Axis = check8Axis.IsChecked == true;
+				CurrentProfile.Is8Axis = check8Axis.IsChecked == true;
 			}
 		}
 	}

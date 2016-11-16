@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using Xbox2Android.Input;
 using Xbox2Android.Native;
 
 namespace Xbox2Android
@@ -20,32 +21,30 @@ namespace Xbox2Android
 		private void Timer_Tick()
 		{
 			XInput.State state;
-			if (m_currentProfile != -1 && XInput.GetState(0, out state) == XInput.ErrorSuccess) {
-				var profile = m_profiles[m_currentProfile];
-
+			if (m_selectedClient != null && m_selectedProfileIndex != -1 && XInput.GetState(0, out state) == XInput.ErrorSuccess) {
 				int triggerValue = 0;
-				switch (profile.TriggerMode) {
+				switch (CurrentProfile.TriggerMode) {
 					case 0:
-						triggerValue = profile.TriggerHappyValue;
+						triggerValue = CurrentProfile.TriggerHappyValue;
 						break;
 					case 1:
-						triggerValue = profile.TriggerDoubleValue;
+						triggerValue = CurrentProfile.TriggerDoubleValue;
 						break;
 					case 2:
-						triggerValue = profile.TriggerTripleValue;
+						triggerValue = CurrentProfile.TriggerTripleValue;
 						break;
 				}
 
 				//Button
-				if (!ProcessButton(profile, state.Gamepad)) {
+				if (!ProcessButton(CurrentProfile, state.Gamepad)) {
 					//If button is not handled, process trigger
 					if (state.Gamepad.RightTrigger > TriggerDeadzone) {
-						RightTriggerAction.TriggerDown(profile.TriggerMode, triggerValue);
+						RightTriggerAction.TriggerDown(CurrentProfile.TriggerMode, triggerValue);
 						m_isTriggerDown = true;
 					}
 					else {
 						if (m_previousGamepad.RightTrigger > TriggerDeadzone) {
-							RightTriggerAction.TriggerUp(profile.TriggerMode, triggerValue);
+							RightTriggerAction.TriggerUp(CurrentProfile.TriggerMode, triggerValue);
 							m_isTriggerDown = false;
 						}
 					}
@@ -53,18 +52,18 @@ namespace Xbox2Android
 				else {
 					//If button is pressed while trigger is still processing, cancel it
 					if (m_isTriggerDown) {
-						RightTriggerAction.TriggerUp(profile.TriggerMode, triggerValue);
+						RightTriggerAction.TriggerUp(CurrentProfile.TriggerMode, triggerValue);
 						m_isTriggerDown = false;
 					}
 				}
 
 				//Axis
-				ProcessAxis(profile, state.Gamepad);
+				ProcessAxis(CurrentProfile, state.Gamepad);
 
 				//Refresh
 				m_previousGamepad = state.Gamepad;
 				if (m_selectedClient != null) {
-					InputMapper.FrameUpdate(profile, m_selectedClient, SendData);
+					InputMapper.FrameUpdate();
 				}
 			}
 			else {
@@ -78,18 +77,18 @@ namespace Xbox2Android
 		bool ProcessButton(TouchProfile profile, XInput.Gamepad gamepad)
 		{
 			bool isHandled = false;
-			for (int buttonId = 0; buttonId < Constants.ButtonValue.Length; ++buttonId) {
-				var flag = Constants.ButtonValue[buttonId];
+			for (int buttonIndex = 0; buttonIndex < Constants.ButtonValue.Length; ++buttonIndex) {
+				var flag = Constants.ButtonValue[buttonIndex];
 				bool isPreviousButtonDown = m_previousGamepad.Buttons.HasFlag(flag);
 				if (gamepad.Buttons.HasFlag(flag)) {
 					isHandled = true;
 					if (!isPreviousButtonDown) {
-						InputMapper.ButtonDown(buttonId);
+						InputMapper.ButtonDown(buttonIndex);
 					}
 				}
 				else {
 					if (isPreviousButtonDown) {
-						InputMapper.ButtonUp(buttonId);
+						InputMapper.ButtonUp(buttonIndex);
 						isHandled = true;
 					}
 				}

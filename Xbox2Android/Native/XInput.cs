@@ -5,7 +5,7 @@ namespace Xbox2Android.Native
 {
 	static class XInput
 	{
-		public const string DllName = "xinput1_4.dll";
+		public const string DllName = "xinput1_3.dll";
 
 		[Flags]
 		public enum GamePadButton : ushort

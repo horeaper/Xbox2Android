@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -14,11 +15,16 @@ namespace Xbox2Android
 
 		public class ClientParam
 		{
+			public string Name;
+			public int Type;
+			public float Width;
+			public float Height;
+
 			public Socket Socket;
 			public byte[] Buffer = new byte[1400];
-		}
 
-		readonly List<ClientParam> m_clients = new List<ClientParam>();
+			public readonly List<byte> ReceivedData = new List<byte>();
+		}
 
 		public void StartServer()
 		{
@@ -60,8 +66,6 @@ namespace Xbox2Android
 
 		public void RemoveClient(ClientParam client)
 		{
-			m_clients.Remove(client);
-
 			Dispatcher.Invoke(() => {
 				foreach (ListBoxItem item in listClients.Items) {
 					if (ReferenceEquals(item.Tag, client)) {
@@ -95,6 +99,33 @@ namespace Xbox2Android
 			listener.BeginAccept(ClientConnectedCallback, listener);
 		}
 
+		void ValidateDataAndRegister(ClientParam client)
+		{
+			if (client.Name == null) {
+				int dataLength = client.ReceivedData[0];
+				if (client.ReceivedData.Count >= dataLength + 1) {
+					var reader = new BinaryReader(new MemoryStream(client.ReceivedData.ToArray()), Encoding.UTF8);
+					reader.ReadByte();
+					client.Name = reader.ReadString();
+					client.Type = reader.ReadByte();
+					client.Width = reader.ReadInt32();
+					client.Height = reader.ReadInt32();
+					client.ReceivedData.Clear();
+
+					Dispatcher.Invoke(() => {
+						listClients.Items.Add(new ListBoxItem {
+							Content = client.Name,
+							Tag = client,
+						});
+						if (listClients.SelectedIndex == -1) {
+							listClients.SelectedIndex = 0;
+						}
+					});
+				}
+			}
+
+		}
+
 		void ReceiveFirstDataCallback(IAsyncResult ar)
 		{
 			var client = (ClientParam)ar.AsyncState;
@@ -118,16 +149,10 @@ namespace Xbox2Android
 				return;
 			}
 
-			m_clients.Add(client);
-			Dispatcher.Invoke(() => {
-				listClients.Items.Add(new ListBoxItem {
-					Content = Encoding.UTF8.GetString(client.Buffer, 0, bytesReceived),
-					Tag = client,
-				});
-				if (listClients.SelectedIndex == -1) {
-					listClients.SelectedIndex = 0;
-				}
-			});
+			var data = new byte[bytesReceived];
+			Array.Copy(client.Buffer, data, bytesReceived);
+			client.ReceivedData.AddRange(data);
+			ValidateDataAndRegister(client);
 
 			client.Socket.BeginReceive(client.Buffer, 0, client.Buffer.Length, SocketFlags.None, ReceiveNextDataCallback, client);
 		}
@@ -155,12 +180,17 @@ namespace Xbox2Android
 				return;
 			}
 
+			var data = new byte[bytesReceived];
+			Array.Copy(client.Buffer, data, bytesReceived);
+			client.ReceivedData.AddRange(data);
+			ValidateDataAndRegister(client);
+
 			client.Socket.BeginReceive(client.Buffer, 0, client.Buffer.Length, SocketFlags.None, ReceiveNextDataCallback, client);
 		}
 
-		public void SendData(ClientParam client, byte[] data)
+		public void SendData(byte[] data)
 		{
-			client.Socket.BeginSend(data, 0, data.Length, SocketFlags.None, SendDataCallback, client);
+			m_selectedClient?.Socket.BeginSend(data, 0, data.Length, SocketFlags.None, SendDataCallback, m_selectedClient);
 		}
 
 		void SendDataCallback(IAsyncResult ar)

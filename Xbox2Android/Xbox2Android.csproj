@@ -73,10 +73,13 @@
     <Compile Include="Controls\TriggerModePanel.xaml.cs">
       <DependentUpon>TriggerModePanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Input\IInput.cs" />
+    <Compile Include="Input\InputMapper.cs" />
+    <Compile Include="Input\Type2.cs" />
     <Compile Include="MainWindow.Icon.cs" />
     <Compile Include="MainWindow.Profile.cs" />
     <Compile Include="MainWindow.Timer.cs" />
-    <Compile Include="InputMapper.cs" />
+    <Compile Include="Input\Type1.cs" />
     <Compile Include="MainWindow.Network.cs" />
     <Compile Include="Native\KeyboardHook.cs" />
     <Compile Include="Native\XInput.cs" />

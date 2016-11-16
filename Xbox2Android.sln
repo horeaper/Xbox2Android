@@ -6,9 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xbox2Android", "Xbox2Android\Xbox2Android.csproj", "{F6AF006F-D3B2-412B-B987-5E20A1F0F144}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xbox2AndroidClient", "Xbox2AndroidClient\Xbox2AndroidClient.csproj", "{31C582A6-2988-4D71-896A-2149A1175FB5}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3529DFBF-2A44-436F-96B4-D03F8705C57C} = {3529DFBF-2A44-436F-96B4-D03F8705C57C}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Xbox2AndroidClientLibrary", "Xbox2AndroidClientLibrary\Xbox2AndroidClientLibrary.vcxproj", "{3529DFBF-2A44-436F-96B4-D03F8705C57C}"
 EndProject

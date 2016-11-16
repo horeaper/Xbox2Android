@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Linq;
+using Xbox2Android.Input;
 
 namespace Xbox2Android
 {
@@ -13,7 +15,9 @@ namespace Xbox2Android
 	{
 		const string SettingFileName = "InputSettings.xml";
 		readonly List<TouchProfile> m_profiles = new List<TouchProfile>();
-		int m_currentProfile = -1;
+		int m_selectedProfileIndex = -1;
+
+		public TouchProfile CurrentProfile => m_profiles[m_selectedProfileIndex];
 
 		void LoadSettings()
 		{
@@ -37,8 +41,8 @@ namespace Xbox2Android
 			}
 
 			if (m_profiles.Count > 0) {
-				m_currentProfile = 0;
-				var selectedItem = (MenuItem)menuTouchProfiles.Items[m_currentProfile];
+				m_selectedProfileIndex = 0;
+				var selectedItem = (MenuItem)menuTouchProfiles.Items[m_selectedProfileIndex];
 				selectedItem.IsChecked = true;
 				OnTouchProfileSelected((TouchProfile)selectedItem.Tag);
 			}
@@ -76,12 +80,18 @@ namespace Xbox2Android
 		{
 			var selectedItem = (MenuItem)sender;
 			var profile = (TouchProfile)selectedItem.Tag;
-			m_currentProfile = m_profiles.IndexOf(profile);
+			SelectProfileByIndex(m_profiles.IndexOf(profile));
+		}
+
+		void SelectProfileByIndex(int index)
+		{
+			Debug.Assert(index >= 0 && index < m_profiles.Count);
+			m_selectedProfileIndex = index;
 			for (int cnt = 0; cnt < m_profiles.Count; ++cnt) {
 				((MenuItem)menuTouchProfiles.Items[cnt]).IsChecked = false;
 			}
-			selectedItem.IsChecked = true;
-			OnTouchProfileSelected(profile);
+			((MenuItem)menuTouchProfiles.Items[index]).IsChecked = true;
+			OnTouchProfileSelected(m_profiles[index]);
 		}
 
 		void MenuNewProfile_OnClick(object sender, RoutedEventArgs e)
@@ -90,21 +100,21 @@ namespace Xbox2Android
 			if (inputWindow.ShowDialog() == true) {
 				var profile = new TouchProfile { Name = inputWindow.Result };
 				AddNewProfile(profile);
-				new TouchProfileWindow(this, profile).ShowDialog();
+				new TouchProfileWindow(profile).ShowDialog();
 			}
 		}
 
 		void MenuEditProfile_OnClick(object sender, RoutedEventArgs e)
 		{
-			if (m_currentProfile != -1) {
-				new TouchProfileWindow(this, m_profiles[m_currentProfile]).ShowDialog();
+			if (m_selectedProfileIndex != -1) {
+				new TouchProfileWindow(CurrentProfile).ShowDialog();
 			}
 		}
 
 		void MenuRenameProfile_OnClick(object sender, RoutedEventArgs e)
 		{
-			if (m_currentProfile != -1) {
-				var profile = m_profiles[m_currentProfile];
+			if (m_selectedProfileIndex != -1) {
+				var profile = CurrentProfile;
 				var inputWindow = new TextInputWindow(this, "Rename Profile", profile.Name);
 				if (inputWindow.ShowDialog() == true) {
 					profile.Name = inputWindow.Result;
@@ -120,22 +130,22 @@ namespace Xbox2Android
 
 		void MenuDeleteProfile_OnClick(object sender, RoutedEventArgs e)
 		{
-			if (m_currentProfile != -1) {
+			if (m_selectedProfileIndex != -1) {
 				if (MessageBox.Show(this, "Delete current selected profile?", "Delete Profile", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes) {
-					menuTouchProfiles.Items.RemoveAt(m_currentProfile);
-					m_profiles.RemoveAt(m_currentProfile);
+					menuTouchProfiles.Items.RemoveAt(m_selectedProfileIndex);
+					m_profiles.RemoveAt(m_selectedProfileIndex);
 
 					if (m_profiles.Count > 0) {
-						m_currentProfile %= m_profiles.Count;
+						m_selectedProfileIndex %= m_profiles.Count;
 						for (int cnt = 0; cnt < m_profiles.Count; ++cnt) {
 							((MenuItem)menuTouchProfiles.Items[cnt]).IsChecked = false;
 						}
-						var selectedItem = (MenuItem)menuTouchProfiles.Items[m_currentProfile];
+						var selectedItem = (MenuItem)menuTouchProfiles.Items[m_selectedProfileIndex];
 						selectedItem.IsChecked = true;
 						OnTouchProfileSelected((TouchProfile)selectedItem.Tag);
 					}
 					else {
-						m_currentProfile = -1;
+						m_selectedProfileIndex = -1;
 						OnTouchProfileSelected(null);
 					}
 				}
@@ -148,6 +158,7 @@ namespace Xbox2Android
 				triggerModeHappy.IsEnabled = true;
 				triggerModeDouble.IsEnabled = true;
 				triggerModeTriple.IsEnabled = true;
+				checkHotKey.IsEnabled = true;
 				checkReverseAxis.IsEnabled = true;
 				check8Axis.IsEnabled = true;
 				checkSnapAxis.IsEnabled = true;
@@ -170,6 +181,7 @@ namespace Xbox2Android
 						triggerModeTriple.IsChecked = true;
 						break;
 				}
+				checkHotKey.IsChecked = profile.IsHotKey;
 				checkReverseAxis.IsChecked = profile.IsReverseAxis;
 				check8Axis.IsChecked = profile.Is8Axis;
 				checkSnapAxis.IsChecked = profile.IsSnapAxis;
@@ -179,10 +191,13 @@ namespace Xbox2Android
 				triggerModeHappy.IsEnabled = false;
 				triggerModeDouble.IsEnabled = false;
 				triggerModeTriple.IsEnabled = false;
+				checkHotKey.IsEnabled = false;
 				checkReverseAxis.IsEnabled = false;
 				check8Axis.IsEnabled = false;
 				checkSnapAxis.IsEnabled = false;
 			}
+
+			InputMapper.Profile = profile;
 		}
 	}
 }

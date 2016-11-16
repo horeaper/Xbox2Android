@@ -12,9 +12,11 @@ namespace Xbox2Android.Native
 			public Key Key;
 		}
 
+		public static event EventHandler<KeyEventArgs> KeyPressed;
+
+#if !DEBUG
 		static IntPtr m_hookId;
 		static HOOKPROC m_hookProc;
-		public static event EventHandler<KeyEventArgs> KeyPressed;
 
 		static KeyboardHook()
 		{
@@ -45,5 +47,6 @@ namespace Xbox2Android.Native
 
 		[DllImport("user32.dll", SetLastError = true)]
 		static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+#endif
 	}
 }

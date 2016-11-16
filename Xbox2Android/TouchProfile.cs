@@ -8,6 +8,8 @@ namespace Xbox2Android
 	{
 		public string Name;
 		public string BackgroundImage;
+		public float Width;
+		public float Height;
 
 		public int TriggerMode;
 		public int TriggerHappyValue;
@@ -17,6 +19,8 @@ namespace Xbox2Android
 		public bool IsReverseAxis;
 		public bool IsSnapAxis;
 		public bool Is8Axis;
+
+		public bool IsHotKey;
 
 		public Point? AxisCenter;
 		public int AxisRadius = 120;
@@ -38,6 +42,12 @@ namespace Xbox2Android
 				}
 				if (rootElement.Attribute("BackgroundImage") != null) {
 					BackgroundImage = rootElement.Attribute("BackgroundImage").Value;
+				}
+				if (rootElement.Attribute("Width") != null) {
+					Width = int.Parse(rootElement.Attribute("Width").Value);
+				}
+				if (rootElement.Attribute("Height") != null) {
+					Height = int.Parse(rootElement.Attribute("Height").Value);
 				}
 
 				if (rootElement.Attribute("TriggerMode") != null) {
@@ -61,6 +71,10 @@ namespace Xbox2Android
 				}
 				if (rootElement.Attribute("Is8Axis") != null) {
 					Is8Axis = bool.Parse(rootElement.Attribute("Is8Axis").Value);
+				}
+
+				if (rootElement.Attribute("IsHotKey") != null) {
+					IsHotKey = bool.Parse(rootElement.Attribute("IsHotKey").Value);
 				}
 
 				if (rootElement.Attribute("AxisCenter") != null) {
@@ -94,6 +108,8 @@ namespace Xbox2Android
 					rootElement.SetAttributeValue("Name", Name);
 				}
 				rootElement.SetAttributeValue("BackgroundImage", BackgroundImage);
+				rootElement.SetAttributeValue("Width", Width);
+				rootElement.SetAttributeValue("Height", Height);
 
 				rootElement.SetAttributeValue("TriggerMode", TriggerMode);
 				rootElement.SetAttributeValue("TriggerHappyValue", TriggerHappyValue);
@@ -103,6 +119,8 @@ namespace Xbox2Android
 				rootElement.SetAttributeValue("IsReverseAxis", IsReverseAxis);
 				rootElement.SetAttributeValue("IsSnapAxis", IsSnapAxis);
 				rootElement.SetAttributeValue("Is8Axis", Is8Axis);
+
+				rootElement.SetAttributeValue("IsHotKey", IsHotKey);
 
 				if (AxisCenter.HasValue) {
 					rootElement.SetAttributeValue("AxisCenter", AxisCenter.Value);
