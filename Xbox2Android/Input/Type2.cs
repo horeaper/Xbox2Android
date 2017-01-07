@@ -165,45 +165,47 @@ namespace Xbox2Android.Input
 
 		public void ButtonDown(int index, Property prop)
 		{
-			Debug.Assert(m_buttonSlot[index].Count == 0);
-			var slots = m_buttonSlot[index];
+			if (m_buttonSlot[index].Count == 0) {
+				var slots = m_buttonSlot[index];
 
-			var points = prop.Profile.ButtonPositions[index];
-			for (int cnt = 0; cnt < points.Count; ++cnt) {
-				slots.Add(GetSlot());
+				var points = prop.Profile.ButtonPositions[index];
+				for (int cnt = 0; cnt < points.Count; ++cnt) {
+					slots.Add(GetSlot());
+				}
+
+				OnTouchDown();
+				for (int cnt = 0; cnt < slots.Count; ++cnt) {
+					FormatEvent(EV_ABS, ABS_MT_SLOT, slots[cnt]);
+					FormatEvent(EV_ABS, ABS_MT_TRACKING_ID, GetTrackingId());
+					FormatEvent(EV_ABS, ABS_MT_POSITION_X, PositionX(points[cnt], prop));
+					FormatEvent(EV_ABS, ABS_MT_POSITION_Y, PositionY(points[cnt], prop));
+					OnTouchPointUpdate(slots[cnt], points[cnt], prop);
+				}
+
+				FormatEvent(EV_SYN, SYN_REPORT);
+				SendBuffer(prop);
 			}
-
-			OnTouchDown();
-			for (int cnt = 0; cnt < slots.Count; ++cnt) {
-				FormatEvent(EV_ABS, ABS_MT_SLOT, slots[cnt]);
-				FormatEvent(EV_ABS, ABS_MT_TRACKING_ID, GetTrackingId());
-				FormatEvent(EV_ABS, ABS_MT_POSITION_X, PositionX(points[cnt], prop));
-				FormatEvent(EV_ABS, ABS_MT_POSITION_Y, PositionY(points[cnt], prop));
-				OnTouchPointUpdate(slots[cnt], points[cnt], prop);
-			}
-
-			FormatEvent(EV_SYN, SYN_REPORT);
-			SendBuffer(prop);
 		}
 
 		public void ButtonUp(int index, Property prop)
 		{
-			Debug.Assert(m_buttonSlot[index].Count > 0);
-			var slots = m_buttonSlot[index];
+			if (m_buttonSlot[index].Count > 0) {
+				var slots = m_buttonSlot[index];
 
-			foreach (short slot in slots) {
-				FormatEvent(EV_ABS, ABS_MT_SLOT, slot);
-				FormatEvent(EV_ABS, ABS_MT_TRACKING_ID, -1);
+				foreach (short slot in slots) {
+					FormatEvent(EV_ABS, ABS_MT_SLOT, slot);
+					FormatEvent(EV_ABS, ABS_MT_TRACKING_ID, -1);
+				}
+
+				foreach (var slot in slots) {
+					PutSlot(slot);
+				}
+				slots.Clear();
+				OnTouchUp();
+
+				FormatEvent(EV_SYN, SYN_REPORT);
+				SendBuffer(prop);
 			}
-
-			foreach (var slot in slots) {
-				PutSlot(slot);
-			}
-			slots.Clear();
-			OnTouchUp();
-
-			FormatEvent(EV_SYN, SYN_REPORT);
-			SendBuffer(prop);
 		}
 
 		public void FrameUpdate(Property prop)
