@@ -35,7 +35,6 @@ namespace Xbox2Android
 
 			Dispatcher.InvokeAsync(() => {
 				switch (e.Key) {
-					case Key.NumPad7:
 					case Key.NumPad8:
 						triggerModeHappy.Value = 0;
 						triggerModeHappy.IsChecked = true;
@@ -44,28 +43,20 @@ namespace Xbox2Android
 						triggerModeHappy.Value = 1;
 						triggerModeHappy.IsChecked = true;
 						break;
-					case Key.NumPad4:
+					case Key.NumPad5:
 						triggerModeDouble.Value = 0;
 						triggerModeDouble.IsChecked = true;
 						break;
-					case Key.NumPad5:
+					case Key.NumPad6:
 						triggerModeDouble.Value = 1;
 						triggerModeDouble.IsChecked = true;
 						break;
-					case Key.NumPad6:
-						triggerModeDouble.Value = 2;
-						triggerModeDouble.IsChecked = true;
-						break;
-					case Key.NumPad1:
+					case Key.NumPad2:
 						triggerModeTriple.Value = 0;
 						triggerModeTriple.IsChecked = true;
 						break;
-					case Key.NumPad2:
-						triggerModeTriple.Value = 1;
-						triggerModeTriple.IsChecked = true;
-						break;
 					case Key.NumPad3:
-						triggerModeTriple.Value = 2;
+						triggerModeTriple.Value = 1;
 						triggerModeTriple.IsChecked = true;
 						break;
 					case Key.NumPad0:
@@ -204,13 +195,6 @@ tagRetry:
 		{
 			if (!IsLoading) {
 				CurrentProfile.IsSnapAxis = checkSnapAxis.IsChecked == true;
-			}
-		}
-
-		void check8Axis_OnCheckedChanged(object sender, RoutedEventArgs e)
-		{
-			if (!IsLoading) {
-				CurrentProfile.Is8Axis = check8Axis.IsChecked == true;
 			}
 		}
 	}

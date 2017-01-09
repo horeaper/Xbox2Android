@@ -112,6 +112,14 @@ namespace Xbox2Android
 
 #region Action sequence
 
+		static readonly ITriggerAction[] TriggerHappy = {
+			new ActionButtonClick(XInput.GamePadButton.A, 0),
+		};
+
+		static readonly ITriggerAction[] TriggerHappyMadness = {
+			new ActionButtonClick(XInput.GamePadButton.A, 0),
+		};
+
 		static readonly ITriggerAction[] DoubleHarmony = {
 			new ActionButtonClick(XInput.GamePadButton.A),
 			new ActionWait(6),
@@ -152,24 +160,16 @@ namespace Xbox2Android
 			new ActionSlide(XInput.GamePadButton.Y, XInput.GamePadButton.B, XInput.GamePadButton.A),
 		};
 
-		static readonly ITriggerAction[] TriggerHappy = {
-			new ActionButtonClick(XInput.GamePadButton.A, 0),
-		};
-
-		static readonly ITriggerAction[] TriggerHappyMadness = {
-			new ActionButtonClick(XInput.GamePadButton.A, 0),
-		};
-
 		static readonly ITriggerAction[][][] Actions = {
 			new[] { TriggerHappy, TriggerHappyMadness },
-			new[] { DoubleHarmony, DoubleHarmonyShock, DoubleHarmonyMadness },
-			new[] { TripleTriplet, TripleTripletFrenzy, TripleTripletMadness },
+			new[] { DoubleHarmonyShock, DoubleHarmonyMadness },
+			new[] { TripleTripletFrenzy, TripleTripletMadness },
 		};
 
 		public static readonly float[][] ActionInterval = {
 			new[] { 1 / 30.0f, 1 / 60.0f },
-			new[] { 1 / 30.0f, 1 / 30.0f, 1 / 30.0f },
-			new[] { 1 / 30.0f, 1 / 30.0f, 1 / 30.0f },
+			new[] { 1 / 30.0f, 1 / 30.0f },
+			new[] { 1 / 30.0f, 1 / 30.0f },
 		};
 
 #endregion

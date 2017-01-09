@@ -119,42 +119,6 @@ namespace Xbox2Android
 					}
 				}
 				else {
-					//8-axis
-					if (profile.Is8Axis) {
-						var angle = Math.Abs(Math.Atan(direction.Y / direction.X) * (180 / Math.PI));
-						if (angle > 0 && angle <= 22.5) {
-							angle = 0;
-						}
-						else if (angle >= 22.5 && angle <= 67.5) {
-							angle = 45;
-						}
-						else if (angle >= 45 + 22.5 && angle < 90) {
-							angle = 90;
-						}
-						if (direction.X > 0) {
-							if (angle == 0) {
-								direction = new Vector(1, 0);
-							}
-							else if (angle == 45) {
-								direction = direction.Y > 0 ? new Vector(1, 1) : new Vector(1, -1);
-							}
-							else if (angle == 90) {
-								direction = direction.Y > 0 ? new Vector(0, 1) : new Vector(0, -1);
-							}
-						}
-						else {
-							if (angle == 0) {
-								direction = new Vector(-1, 0);
-							}
-							else if (angle == 45) {
-								direction = direction.Y > 0 ? new Vector(-1, 1) : new Vector(-1, -1);
-							}
-							else if (angle == 90) {
-								direction = direction.Y > 0 ? new Vector(0, 1) : new Vector(0, -1);
-							}
-						}
-					}
-
 					//Normalize
 					direction.Normalize();
 					direction *= profile.AxisRadius;

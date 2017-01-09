@@ -5,7 +5,7 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:Controls="clr-namespace:Xbox2Android.Controls" x:Class="Xbox2Android.MainWindow"
 		mc:Ignorable="d"
-		Title="Xbox 2 Android" Width="300" Height="130" Opacity="0.5" AllowsTransparency="True" WindowStartupLocation="Manual" ResizeMode="NoResize" Topmost="True" ShowInTaskbar="False" Icon="Program.ico"
+		Title="Xbox 2 Android" Width="210" Height="120" Opacity="0.5" AllowsTransparency="True" WindowStartupLocation="Manual" ResizeMode="NoResize" Topmost="True" ShowInTaskbar="False" Icon="Program.ico"
 		Loaded="MainWindow_Loaded" Closing="MainWindow_Closing" WindowStyle="None">
 	<Window.Resources>
 		<Style x:Key="styleListBoxItem" TargetType="ListBoxItem">
@@ -30,7 +30,7 @@
 	
 	<Grid Background="White" MouseEnter="LayoutRoot_OnMouseEnter" MouseLeave="LayoutRoot_OnMouseLeave">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="100" />
+			<ColumnDefinition Width="85" />
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
@@ -45,33 +45,31 @@
 					<DockPanel HorizontalAlignment="Stretch"/>
 				</ItemsPanelTemplate>
 			</Menu.ItemsPanel>
-			<MenuItem x:Name="menuTouchProfiles" Header="Touch Profile" Margin="2">
+			<MenuItem x:Name="menuTouchProfiles" Header="Profile" Margin="2">
 				<Separator />
 				<MenuItem x:Name="menuNewProfile" Header="New..." Click="MenuNewProfile_OnClick" />
 				<MenuItem x:Name="menuEditProfile" Header="Edit..." Click="MenuEditProfile_OnClick" />
 				<MenuItem x:Name="menuRenameProfile" Header="Rename..." Click="MenuRenameProfile_OnClick" />
 				<MenuItem x:Name="menuDeleteProfile" Header="Delete" Click="MenuDeleteProfile_OnClick" />
 			</MenuItem>
-			<MenuItem x:Name="menuLocalIPs" Header="Local IPs" Margin="2"  />
+			<MenuItem x:Name="menuLocalIPs" Header="IP" Margin="2"  />
 			<CheckBox x:Name="checkHotKey" Content="Hot Key" Checked="CheckHotKey_OnCheckedChanged" Unchecked="CheckHotKey_OnCheckedChanged" />
 			<MenuItem Header="Exit" Margin="2" HorizontalAlignment="Right" Click="MenuExit_OnClick" />
 		</Menu>
 
 		<TextBlock Text="Clients" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,5,0,0" />
-		<ListBox x:Name="listClients" Grid.Row="1" Grid.RowSpan="2" Margin="5,25,5,5" ItemContainerStyle="{StaticResource styleListBoxItem}" SelectionChanged="listClients_OnSelectionChanged">
+		<ListBox x:Name="listClients" Grid.Row="1" Grid.RowSpan="2" Margin="3,25,3,3" ItemContainerStyle="{StaticResource styleListBoxItem}" SelectionChanged="listClients_OnSelectionChanged">
 		</ListBox>
 
-		<StackPanel Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="5,0,5,0">
-			<Controls:TriggerModePanel x:Name="triggerModeHappy" HorizontalAlignment="Stretch" Text="Happy" MaximumValue="1" Margin="0,5,0,5" Selected="TriggerModeHappy_OnSelected" />
-			<Controls:TriggerModePanel x:Name="triggerModeDouble" HorizontalAlignment="Stretch" Text="Double" MaximumValue="2" Margin="0,5,0,5" Selected="TriggerModeDouble_OnSelected" />
-			<Controls:TriggerModePanel x:Name="triggerModeTriple" HorizontalAlignment="Stretch" Text="Triple" MaximumValue="2" Margin="0,5,0,5" Selected="TriggerModeTriple_OnSelected" />
+		<StackPanel Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="3,0,3,0">
+			<Controls:TriggerModePanel x:Name="triggerModeHappy" HorizontalAlignment="Stretch" Text="Happy" Margin="0,3,0,3" Selected="TriggerModeHappy_OnSelected" />
+			<Controls:TriggerModePanel x:Name="triggerModeDouble" HorizontalAlignment="Stretch" Text="Double" Margin="0,3,0,3" Selected="TriggerModeDouble_OnSelected" />
+			<Controls:TriggerModePanel x:Name="triggerModeTriple" HorizontalAlignment="Stretch" Text="Triple" Margin="0,3,0,3" Selected="TriggerModeTriple_OnSelected" />
 		</StackPanel>
 
 		<StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
-			<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0" Text="Axis" />
-			<CheckBox x:Name="checkReverseAxis" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0" Content="Reverse" Checked="checkReverseAxis_OnCheckedChanged" Unchecked="checkReverseAxis_OnCheckedChanged"/>
+			<CheckBox x:Name="checkReverseAxis" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="3,0,0,0" Content="Reverse" Checked="checkReverseAxis_OnCheckedChanged" Unchecked="checkReverseAxis_OnCheckedChanged"/>
 			<CheckBox x:Name="checkSnapAxis" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0" Content="Snap" Checked="checkSnapAxis_OnCheckedChanged" Unchecked="checkSnapAxis_OnCheckedChanged"/>
-			<CheckBox x:Name="check8Axis" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0" Content="8-Dir" Checked="check8Axis_OnCheckedChanged" Unchecked="check8Axis_OnCheckedChanged"/>
 		</StackPanel>
 	</Grid>
 </Window>

@@ -160,7 +160,6 @@ namespace Xbox2Android
 				triggerModeTriple.IsEnabled = true;
 				checkHotKey.IsEnabled = true;
 				checkReverseAxis.IsEnabled = true;
-				check8Axis.IsEnabled = true;
 				checkSnapAxis.IsEnabled = true;
 
 				IsLoading = true;
@@ -183,7 +182,6 @@ namespace Xbox2Android
 				}
 				checkHotKey.IsChecked = profile.IsHotKey;
 				checkReverseAxis.IsChecked = profile.IsReverseAxis;
-				check8Axis.IsChecked = profile.Is8Axis;
 				checkSnapAxis.IsChecked = profile.IsSnapAxis;
 				IsLoading = false;
 			}
@@ -193,7 +191,6 @@ namespace Xbox2Android
 				triggerModeTriple.IsEnabled = false;
 				checkHotKey.IsEnabled = false;
 				checkReverseAxis.IsEnabled = false;
-				check8Axis.IsEnabled = false;
 				checkSnapAxis.IsEnabled = false;
 			}
 

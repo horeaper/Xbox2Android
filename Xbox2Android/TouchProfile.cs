@@ -18,7 +18,6 @@ namespace Xbox2Android
 
 		public bool IsReverseAxis;
 		public bool IsSnapAxis;
-		public bool Is8Axis;
 
 		public bool IsHotKey;
 
@@ -69,9 +68,6 @@ namespace Xbox2Android
 				if (rootElement.Attribute("IsSnapAxis") != null) {
 					IsSnapAxis = bool.Parse(rootElement.Attribute("IsSnapAxis").Value);
 				}
-				if (rootElement.Attribute("Is8Axis") != null) {
-					Is8Axis = bool.Parse(rootElement.Attribute("Is8Axis").Value);
-				}
 
 				if (rootElement.Attribute("IsHotKey") != null) {
 					IsHotKey = bool.Parse(rootElement.Attribute("IsHotKey").Value);
@@ -118,7 +114,6 @@ namespace Xbox2Android
 
 				rootElement.SetAttributeValue("IsReverseAxis", IsReverseAxis);
 				rootElement.SetAttributeValue("IsSnapAxis", IsSnapAxis);
-				rootElement.SetAttributeValue("Is8Axis", Is8Axis);
 
 				rootElement.SetAttributeValue("IsHotKey", IsHotKey);
 
