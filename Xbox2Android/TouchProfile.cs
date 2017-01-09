@@ -54,12 +54,21 @@ namespace Xbox2Android
 				}
 				if (rootElement.Attribute("TriggerHappyValue") != null) {
 					TriggerHappyValue = int.Parse(rootElement.Attribute("TriggerHappyValue").Value);
+					if (TriggerDoubleValue > 1) {
+						TriggerDoubleValue = 1;
+					}
 				}
 				if (rootElement.Attribute("TriggerDoubleValue") != null) {
 					TriggerDoubleValue = int.Parse(rootElement.Attribute("TriggerDoubleValue").Value);
+					if (TriggerDoubleValue > 1) {
+						TriggerDoubleValue = 1;
+					}
 				}
 				if (rootElement.Attribute("TriggerTripleValue") != null) {
 					TriggerTripleValue = int.Parse(rootElement.Attribute("TriggerTripleValue").Value);
+					if (TriggerDoubleValue > 1) {
+						TriggerDoubleValue = 1;
+					}
 				}
 
 				if (rootElement.Attribute("IsReverseAxis") != null) {
