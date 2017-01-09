@@ -5,7 +5,7 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:Controls="clr-namespace:Xbox2Android.Controls" x:Class="Xbox2Android.MainWindow"
 		mc:Ignorable="d"
-		Title="Xbox 2 Android" Width="210" Height="120" Opacity="0.5" AllowsTransparency="True" WindowStartupLocation="Manual" ResizeMode="NoResize" Topmost="True" ShowInTaskbar="False" Icon="Program.ico"
+		Title="Xbox 2 Android" Width="125" Height="190" Opacity="0.5" AllowsTransparency="True" WindowStartupLocation="Manual" ResizeMode="NoResize" Topmost="True" ShowInTaskbar="False" Icon="Program.ico"
 		Loaded="MainWindow_Loaded" Closing="MainWindow_Closing" WindowStyle="None">
 	<Window.Resources>
 		<Style x:Key="styleListBoxItem" TargetType="ListBoxItem">
@@ -29,17 +29,14 @@
 	</Window.Resources>
 	
 	<Grid Background="White" MouseEnter="LayoutRoot_OnMouseEnter" MouseLeave="LayoutRoot_OnMouseLeave">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="85" />
-			<ColumnDefinition Width="*" />
-		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
-			<RowDefinition Height="25" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
-		<Menu Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+		<Menu HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 			<Menu.ItemsPanel>
 				<ItemsPanelTemplate>
 					<DockPanel HorizontalAlignment="Stretch"/>
@@ -53,23 +50,23 @@
 				<MenuItem x:Name="menuDeleteProfile" Header="Delete" Click="MenuDeleteProfile_OnClick" />
 			</MenuItem>
 			<MenuItem x:Name="menuLocalIPs" Header="IP" Margin="2"  />
-			<CheckBox x:Name="checkHotKey" Content="Hot Key" Checked="CheckHotKey_OnCheckedChanged" Unchecked="CheckHotKey_OnCheckedChanged" />
-			<MenuItem Header="Exit" Margin="2" HorizontalAlignment="Right" Click="MenuExit_OnClick" />
+			<MenuItem Header="Exit" Margin="2" Padding="10,1,10,1" HorizontalAlignment="Right" Click="MenuExit_OnClick" />
 		</Menu>
 
 		<TextBlock Text="Clients" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,5,0,0" />
-		<ListBox x:Name="listClients" Grid.Row="1" Grid.RowSpan="2" Margin="3,25,3,3" ItemContainerStyle="{StaticResource styleListBoxItem}" SelectionChanged="listClients_OnSelectionChanged">
+		<CheckBox x:Name="checkHotKey" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,5,0" Content="Hotkey" Checked="CheckHotKey_OnCheckedChanged" Unchecked="CheckHotKey_OnCheckedChanged" />
+		<ListBox x:Name="listClients" Grid.Row="1" Margin="5,25,5,3" ItemContainerStyle="{StaticResource styleListBoxItem}" SelectionChanged="listClients_OnSelectionChanged" PreviewKeyDown="listClients_OnPreviewKeyDown">
 		</ListBox>
 
-		<StackPanel Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="3,0,3,0">
-			<Controls:TriggerModePanel x:Name="triggerModeHappy" HorizontalAlignment="Stretch" Text="Happy" Margin="0,3,0,3" Selected="TriggerModeHappy_OnSelected" />
-			<Controls:TriggerModePanel x:Name="triggerModeDouble" HorizontalAlignment="Stretch" Text="Double" Margin="0,3,0,3" Selected="TriggerModeDouble_OnSelected" />
-			<Controls:TriggerModePanel x:Name="triggerModeTriple" HorizontalAlignment="Stretch" Text="Triple" Margin="0,3,0,3" Selected="TriggerModeTriple_OnSelected" />
+		<StackPanel Grid.Row="2" VerticalAlignment="Center" Margin="5,0,5,0">
+			<Controls:TriggerModePanel x:Name="triggerModeHappy" HorizontalAlignment="Stretch" Text="Happy" Margin="0,2,0,2" Selected="TriggerModeHappy_OnSelected" />
+			<Controls:TriggerModePanel x:Name="triggerModeDouble" HorizontalAlignment="Stretch" Text="Double" Margin="0,2,0,2" Selected="TriggerModeDouble_OnSelected" />
+			<Controls:TriggerModePanel x:Name="triggerModeTriple" HorizontalAlignment="Stretch" Text="Triple" Margin="0,2,0,2" Selected="TriggerModeTriple_OnSelected" />
 		</StackPanel>
 
-		<StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
-			<CheckBox x:Name="checkReverseAxis" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="3,0,0,0" Content="Reverse" Checked="checkReverseAxis_OnCheckedChanged" Unchecked="checkReverseAxis_OnCheckedChanged"/>
-			<CheckBox x:Name="checkSnapAxis" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0" Content="Snap" Checked="checkSnapAxis_OnCheckedChanged" Unchecked="checkSnapAxis_OnCheckedChanged"/>
+		<StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,3,0,5">
+			<CheckBox x:Name="checkReverseAxis" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,2,0" Content="Reverse" Checked="checkReverseAxis_OnCheckedChanged" Unchecked="checkReverseAxis_OnCheckedChanged"/>
+			<CheckBox x:Name="checkSnapAxis" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2,0,0,0" Content="Snap" Checked="checkSnapAxis_OnCheckedChanged" Unchecked="checkSnapAxis_OnCheckedChanged"/>
 		</StackPanel>
 	</Grid>
 </Window>

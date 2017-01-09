@@ -144,6 +144,11 @@ tagRetry:
 			}
 		}
 
+		void listClients_OnPreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			e.Handled = true;
+		}
+
 		void TriggerModeHappy_OnSelected(object sender, EventArgs e)
 		{
 			if (!IsLoading) {
