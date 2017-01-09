@@ -39,5 +39,9 @@ namespace Xbox2Android
 			"X",
 			"Y"
 		};
+
+		public static readonly string[] BalloonLevelDisplay = {
+			"Low", "High"
+		};
 	}
 }

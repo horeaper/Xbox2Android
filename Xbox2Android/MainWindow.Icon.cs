@@ -30,7 +30,7 @@ namespace Xbox2Android
 		private void NotifyIcon_MouseClick(object sender, MouseEventArgs e)
 		{
 			if (e.Button == MouseButtons.Left) {
-				if (IsVisible) {
+				if (this.IsVisible) {
 					Hide();
 				}
 				else {
@@ -42,6 +42,13 @@ namespace Xbox2Android
 		private void MenuExit_Click(object sender, EventArgs e)
 		{
 			Close();
+		}
+
+		void ShowBalloonTip(string text)
+		{
+			if (!this.IsVisible) {
+				m_notifyIcon.ShowBalloonTip(1000, "", text, ToolTipIcon.Info);
+			}
 		}
 	}
 }

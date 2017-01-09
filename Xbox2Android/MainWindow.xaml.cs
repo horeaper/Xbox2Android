@@ -138,6 +138,7 @@ tagRetry:
 					var profile = m_profiles[index];
 					if (profile.Name == m_selectedClient.Name || m_selectedClient.Name.StartsWith(profile.Name + "-")) {
 						SelectProfileByIndex(index);
+						ShowBalloonTip($"Profile: {profile.Name}");
 						break;
 					}
 				}
@@ -157,6 +158,7 @@ tagRetry:
 				CurrentProfile.TriggerMode = 0;
 				CurrentProfile.TriggerHappyValue = triggerModeHappy.Value;
 				m_timer.Change(RightTriggerAction.ActionInterval[0][CurrentProfile.TriggerHappyValue]);
+				ShowBalloonTip($"Happy: {Constants.BalloonLevelDisplay[CurrentProfile.TriggerHappyValue]}");
 			}
 		}
 
@@ -168,6 +170,7 @@ tagRetry:
 				CurrentProfile.TriggerMode = 1;
 				CurrentProfile.TriggerDoubleValue = triggerModeDouble.Value;
 				m_timer.Change(RightTriggerAction.ActionInterval[1][CurrentProfile.TriggerDoubleValue]);
+				ShowBalloonTip($"Double: {Constants.BalloonLevelDisplay[CurrentProfile.TriggerDoubleValue]}");
 			}
 		}
 
@@ -179,6 +182,7 @@ tagRetry:
 				CurrentProfile.TriggerMode = 2;
 				CurrentProfile.TriggerTripleValue = triggerModeTriple.Value;
 				m_timer.Change(RightTriggerAction.ActionInterval[2][CurrentProfile.TriggerTripleValue]);
+				ShowBalloonTip($"Triple: {Constants.BalloonLevelDisplay[CurrentProfile.TriggerTripleValue]}");
 			}
 		}
 
