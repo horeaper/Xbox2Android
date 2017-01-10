@@ -138,7 +138,7 @@ tagRetry:
 					var profile = m_profiles[index];
 					if (profile.Name == m_selectedClient.Name || m_selectedClient.Name.StartsWith(profile.Name + "-")) {
 						SelectProfileByIndex(index);
-						ShowBalloonTip($"Profile: {profile.Name}");
+						ShowBalloonTip($"Client: {m_selectedClient.Name}");
 						break;
 					}
 				}
