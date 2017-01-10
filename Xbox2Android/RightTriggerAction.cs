@@ -162,14 +162,14 @@ namespace Xbox2Android
 
 		static readonly ITriggerAction[][][] Actions = {
 			new[] { TriggerHappy, TriggerHappyMadness },
-			new[] { DoubleHarmonyShock, DoubleHarmonyMadness },
-			new[] { TripleTripletFrenzy, TripleTripletMadness },
+			new[] { DoubleHarmonyShock, DoubleHarmonyShock },
+			new[] { TripleTripletFrenzy, TripleTripletFrenzy },
 		};
 
 		public static readonly float[][] ActionInterval = {
 			new[] { 1 / 30.0f, 1 / 60.0f },
-			new[] { 1 / 30.0f, 1 / 30.0f },
-			new[] { 1 / 30.0f, 1 / 30.0f },
+			new[] { 1 / 30.0f, 1 / 60.0f },
+			new[] { 1 / 30.0f, 1 / 60.0f },
 		};
 
 #endregion
