@@ -41,9 +41,7 @@ namespace Xbox2AndroidClient
 
 			Load();
 			SetServiceRunning(NetworkService.IsRunning);
-			if (string.IsNullOrEmpty(m_inputEventPath)) {
-				GetTouchInputEvent();
-			}
+			GetTouchInputEvent();
 		}
 
 		protected override void OnDestroy()
