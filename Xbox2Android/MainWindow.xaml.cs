@@ -130,10 +130,13 @@ tagRetry:
 
 		void listClients_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			m_selectedClient = (ClientParam)((ListBoxItem)listClients.SelectedItem)?.Tag;
+			var selectedItem = (ListBoxItem)listClients.SelectedItem;
+			m_selectedClient = (ClientParam)selectedItem?.Tag;
 			InputMapper.Client = m_selectedClient;
 
-			if (m_selectedClient != null) {
+			if (selectedItem != null) {
+				listClients.ScrollIntoView(selectedItem);
+
 				for (int index = 0; index < m_profiles.Count; index++) {
 					var profile = m_profiles[index];
 					if (profile.Name == m_selectedClient.Name || m_selectedClient.Name.StartsWith(profile.Name + "-")) {
