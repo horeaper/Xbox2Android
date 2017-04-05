@@ -21,7 +21,9 @@ namespace Xbox2Android
 			CreateNotifyIcon();
 			StartServer();
 			InputMapper.SendDataCallback = SendData;
+#if !DEBUG
 			Native.KeyboardHook.KeyPressed += KeyboardHook_KeyPressed;
+#endif
 		}
 
 		private void KeyboardHook_KeyPressed(object sender, Native.KeyboardHook.KeyEventArgs e)

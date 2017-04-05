@@ -1,4 +1,5 @@
-﻿using Xbox2Android.Native;
+﻿using System.Windows;
+using Xbox2Android.Native;
 
 namespace Xbox2Android
 {
@@ -43,5 +44,30 @@ namespace Xbox2Android
 		public static readonly string[] BalloonLevelDisplay = {
 			"Low", "High"
 		};
+
+		//     0
+		//   7   1
+		// 6       2
+		//   5   3
+		//     4
+		public static readonly Vector[] DirectionVector = new Vector[8];
+
+		static Constants()
+		{
+			//     1
+			// -1  0  1
+			//    -1
+			DirectionVector[0] = new Vector(0, 1);
+			DirectionVector[1] = new Vector(1, 1);
+			DirectionVector[2] = new Vector(1, 0);
+			DirectionVector[3] = new Vector(1, -1);
+			DirectionVector[4] = new Vector(0, -1);
+			DirectionVector[5] = new Vector(-1, -1);
+			DirectionVector[6] = new Vector(-1, 0);
+			DirectionVector[7] = new Vector(-1, 1);
+			for (int cnt = 0; cnt < DirectionVector.Length; ++cnt) {
+				DirectionVector[cnt].Normalize();
+			}
+		}
 	}
 }

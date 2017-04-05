@@ -119,8 +119,20 @@ namespace Xbox2Android
 					}
 				}
 				else {
-					//Normalize
+					//Normalize (and apply snap)
 					direction.Normalize();
+					if (profile.IsSnapAxis) {
+						int index = -1;
+						double minValue = -1.0;
+						for (int cnt = 0; cnt < Constants.DirectionVector.Length; ++cnt) {
+							double dotProduct = direction * Constants.DirectionVector[cnt];
+							if (dotProduct > minValue) {
+								index = cnt;
+								minValue = dotProduct;
+							}
+						}
+						direction = Constants.DirectionVector[index];
+					}
 					direction *= profile.AxisRadius;
 
 					//Reverse axis
