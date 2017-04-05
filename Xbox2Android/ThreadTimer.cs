@@ -13,12 +13,12 @@ namespace Xbox2Android
 
 		readonly long m_frequency;
 		long m_lastCounter;
-		readonly Action m_callback;
+		readonly Action<float> m_callback;
 		volatile float m_interval;
 		readonly Thread m_runningThread;
 		volatile bool m_isRunning = true;
 
-		public ThreadTimer(Action callback, float interval)
+		public ThreadTimer(Action<float> callback, float interval)
 		{
 			QueryPerformanceFrequency(out m_frequency);
 			QueryPerformanceCounter(out m_lastCounter);
@@ -46,7 +46,7 @@ namespace Xbox2Android
 				QueryPerformanceCounter(out counter);
 				double elapsed = (double)(counter - m_lastCounter) / m_frequency;
 				if (elapsed >= m_interval) {
-					m_callback();
+					m_callback((float)elapsed);
 					m_lastCounter = counter;
 				}
 				else {

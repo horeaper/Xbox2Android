@@ -17,6 +17,10 @@ namespace Xbox2Android.Input
 		void AxisUpdate(Point point, Property prop);
 		void AxisUp(Property prop);
 
+		void DirectionDown(Point point, Property prop);
+		void DirectionUpdate(Point point, Property prop);
+		void DirectionUp(Property prop);
+
 		void ButtonDown(int index, Property prop);
 		void ButtonUp(int index, Property prop);
 

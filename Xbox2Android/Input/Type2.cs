@@ -33,6 +33,7 @@ namespace Xbox2Android.Input
 
 		bool m_isPreviousTouchDown;
 		short? m_axisSlot;
+		short? m_dirSlot;
 		readonly List<short>[] m_buttonSlot = new List<short>[Constants.ButtonCount];
 
 		readonly BinaryWriter m_sendData = new BinaryWriter(new MemoryStream(1400));
@@ -79,7 +80,7 @@ namespace Xbox2Android.Input
 
 		void OnTouchUp()
 		{
-			bool isTouchDown = m_axisSlot.HasValue || m_buttonSlot.Any(item => item.Count > 0);
+			bool isTouchDown = m_axisSlot.HasValue || m_dirSlot.HasValue || m_buttonSlot.Any(item => item.Count > 0);
 			if (!isTouchDown) {
 				FormatEvent(EV_KEY, BTN_TOUCH, TOUCH_UP);
 				m_isPreviousTouchDown = false;
@@ -94,7 +95,7 @@ namespace Xbox2Android.Input
 			}
 		}
 
-		short GetSlot()
+		short GetFreeSlot()
 		{
 			for (short cnt = 0; cnt < m_slotStatus.Length; ++cnt) {
 				if (!m_slotStatus[cnt]) {
@@ -122,7 +123,7 @@ namespace Xbox2Android.Input
 		public void AxisDown(Point point, Property prop)
 		{
 			Debug.Assert(!m_axisSlot.HasValue);
-			m_axisSlot = GetSlot();
+			m_axisSlot = GetFreeSlot();
 
 			OnTouchDown();
 			FormatEvent(EV_ABS, ABS_MT_SLOT, m_axisSlot.Value);
@@ -163,6 +164,50 @@ namespace Xbox2Android.Input
 			SendBuffer(prop);
 		}
 
+		public void DirectionDown(Point point, Property prop)
+		{
+			Debug.Assert(!m_dirSlot.HasValue);
+			m_dirSlot = GetFreeSlot();
+
+			OnTouchDown();
+			FormatEvent(EV_ABS, ABS_MT_SLOT, m_dirSlot.Value);
+			FormatEvent(EV_ABS, ABS_MT_TRACKING_ID, GetTrackingId());
+			FormatEvent(EV_ABS, ABS_MT_POSITION_X, PositionX(point, prop));
+			FormatEvent(EV_ABS, ABS_MT_POSITION_Y, PositionY(point, prop));
+			OnTouchPointUpdate(m_dirSlot.Value, point, prop);
+
+			FormatEvent(EV_SYN, SYN_REPORT);
+			SendBuffer(prop);
+		}
+
+		public void DirectionUpdate(Point point, Property prop)
+		{
+			Debug.Assert(m_dirSlot.HasValue);
+
+			FormatEvent(EV_ABS, ABS_MT_SLOT, m_dirSlot.Value);
+			FormatEvent(EV_ABS, ABS_MT_POSITION_X, PositionX(point, prop));
+			FormatEvent(EV_ABS, ABS_MT_POSITION_Y, PositionY(point, prop));
+			OnTouchPointUpdate(m_dirSlot.Value, point, prop);
+
+			FormatEvent(EV_SYN, SYN_REPORT);
+			SendBuffer(prop);
+		}
+
+		public void DirectionUp(Property prop)
+		{
+			Debug.Assert(m_dirSlot.HasValue);
+
+			FormatEvent(EV_ABS, ABS_MT_SLOT, m_dirSlot.Value);
+			FormatEvent(EV_ABS, ABS_MT_TRACKING_ID, -1);
+
+			PutSlot(m_dirSlot.Value);
+			m_dirSlot = null;
+			OnTouchUp();
+
+			FormatEvent(EV_SYN, SYN_REPORT);
+			SendBuffer(prop);
+		}
+
 		public void ButtonDown(int index, Property prop)
 		{
 			if (m_buttonSlot[index].Count == 0) {
@@ -170,7 +215,7 @@ namespace Xbox2Android.Input
 
 				var points = prop.Profile.ButtonPositions[index];
 				for (int cnt = 0; cnt < points.Count; ++cnt) {
-					slots.Add(GetSlot());
+					slots.Add(GetFreeSlot());
 				}
 
 				OnTouchDown();

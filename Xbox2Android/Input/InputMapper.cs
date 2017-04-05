@@ -52,6 +52,27 @@ namespace Xbox2Android.Input
 			}
 		}
 
+		public static void DirectionDown(Point point)
+		{
+			if (m_prop.Profile.DirectionCenter.HasValue) {
+				m_input[Client.Type].DirectionDown(point, m_prop);
+			}
+		}
+
+		public static void DirectionUpdate(Point point)
+		{
+			if (m_prop.Profile.DirectionCenter.HasValue) {
+				m_input[Client.Type].DirectionUpdate(point, m_prop);
+			}
+		}
+
+		public static void DirectionUp()
+		{
+			if (m_prop.Profile.DirectionCenter.HasValue) {
+				m_input[Client.Type].DirectionUp(m_prop);
+			}
+		}
+
 		public static void ButtonDown(XInput.GamePadButton button)
 		{
 			ButtonDown(Array.IndexOf(Constants.ButtonValue, button));

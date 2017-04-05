@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="Xbox2Android.Controls.DirectionControl"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:Xbox2Android.Controls"
+			 mc:Ignorable="d" 
+			 Width="500" Height="300">
+	<UserControl.RenderTransform>
+		<TranslateTransform x:Name="matrixTranslate" X="-250" Y="-150" />
+	</UserControl.RenderTransform>
+	<UserControl.Resources>
+	</UserControl.Resources>
+	<Grid>
+		<Grid.ContextMenu>
+			<ContextMenu>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Text="Speed" Margin="0,0,5,0" />
+					<TextBox x:Name="textDirectionSpeed" Width="50" TextChanged="TextDirectionSpeed_TextChanged" />
+				</StackPanel>
+				<MenuItem Header="Remove" Click="MenuRemove_Click" />
+			</ContextMenu>
+		</Grid.ContextMenu>
+		
+		<Rectangle x:Name="shapeBackgroundH" VerticalAlignment="Center" Height="50" Stroke="Black" StrokeThickness="3" Fill="#8000FFFF" />
+		<Rectangle x:Name="shapeBackgroundV" HorizontalAlignment="Center" Width="50" Stroke="Black" StrokeThickness="3" Fill="#8000FFFF" />
+		<Ellipse HorizontalAlignment="Center" VerticalAlignment="Center" Width="20" Height="20" Stroke="White" StrokeThickness="1" Fill="#C0000000" />
+	</Grid>
+</UserControl>

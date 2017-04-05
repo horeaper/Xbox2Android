@@ -24,6 +24,8 @@ namespace Xbox2Android
 		public Point? AxisCenter;
 		public int AxisRadius = 120;
 		public int? ShadowAxisOffset;
+		public Point? DirectionCenter;
+		public int DirectionSpeed = 400;
 		public List<Point>[] ButtonPositions = new List<Point>[Constants.ButtonCount];
 
 		public TouchProfile()
@@ -84,10 +86,14 @@ namespace Xbox2Android
 
 				if (rootElement.Attribute("AxisCenter") != null) {
 					AxisCenter = Point.Parse(rootElement.Attribute("AxisCenter").Value);
+					AxisRadius = int.Parse(rootElement.Attribute("AxisRadius").Value);
 				}
-				AxisRadius = int.Parse(rootElement.Attribute("AxisRadius").Value);
 				if (rootElement.Attribute("ShadowAxisOffset") != null) {
 					ShadowAxisOffset = int.Parse(rootElement.Attribute("ShadowAxisOffset").Value);
+				}
+				if (rootElement.Attribute("DirectionCenter") != null) {
+					DirectionCenter = Point.Parse(rootElement.Attribute("DirectionCenter").Value);
+					DirectionSpeed = int.Parse(rootElement.Attribute("DirectionSpeed").Value);
 				}
 				int index = 0;
 				foreach (var buttonElement in rootElement.Elements("Button")) {
@@ -128,10 +134,14 @@ namespace Xbox2Android
 
 				if (AxisCenter.HasValue) {
 					rootElement.SetAttributeValue("AxisCenter", AxisCenter.Value);
+					rootElement.SetAttributeValue("AxisRadius", AxisRadius);
 				}
-				rootElement.SetAttributeValue("AxisRadius", AxisRadius);
 				if (ShadowAxisOffset.HasValue) {
 					rootElement.SetAttributeValue("ShadowAxisOffset", ShadowAxisOffset.Value);
+				}
+				if (DirectionCenter.HasValue) {
+					rootElement.SetAttributeValue("DirectionCenter", DirectionCenter.Value);
+					rootElement.SetAttributeValue("DirectionSpeed", DirectionSpeed);
 				}
 				for (int cnt = 0; cnt < Constants.ButtonCount; ++cnt) {
 					var buttonElement = new XElement("Button");

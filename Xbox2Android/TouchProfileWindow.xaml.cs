@@ -17,6 +17,7 @@ namespace Xbox2Android
 		public TouchProfile Profile { get; }
 
 		AxisControl m_axisControl;
+		DirectionControl m_dirControl;
 		List<ButtonControl>[] m_buttonControls = new List<ButtonControl>[Constants.ButtonCount];
 
 		string m_backgroundImage;
@@ -38,6 +39,10 @@ namespace Xbox2Android
 			if (Profile.AxisCenter.HasValue) {
 				AddAxisControlToCanvas();
 				m_axisControl.Location = Profile.AxisCenter.Value;
+			}
+			if (Profile.DirectionCenter.HasValue) {
+				AddDirectionControlToCanvas();
+				m_dirControl.Location = Profile.DirectionCenter.Value;
 			}
 			for (int index = 0; index < Constants.ButtonCount; ++index) {
 				foreach (var point in Profile.ButtonPositions[index]) {
@@ -76,6 +81,15 @@ namespace Xbox2Android
 			canvasMain.Children.Add(m_axisControl);
 		}
 
+		void AddDirectionControlToCanvas()
+		{
+			m_dirControl = new DirectionControl(Profile);
+			m_dirControl.MouseDown += IDisplayControl_MouseDown;
+			m_dirControl.MouseUp += IDisplayControl_MouseUp;
+			m_dirControl.RemoveClicked += DirectionControl_RemoveClicked;
+			canvasMain.Children.Add(m_dirControl);
+		}
+
 		void AddButtonControlToCanvas(ButtonControl control, List<ButtonControl> collection)
 		{
 			control.MouseDown += IDisplayControl_MouseDown;
@@ -94,6 +108,9 @@ namespace Xbox2Android
 			if (m_axisControl != null) {
 				m_axisControl.IsSelected = false;
 			}
+			if (m_dirControl != null) {
+				m_dirControl.IsSelected = false;
+			}
 			foreach (var control in m_buttonControls.SelectMany(items => items)) {
 				control.IsSelected = false;
 			}
@@ -110,9 +127,10 @@ namespace Xbox2Android
 
 		private void SetBackgroundImage_Click(object sender, RoutedEventArgs e)
 		{
-			var openFile = new OpenFileDialog();
-			openFile.Filter = "Supported Image File (*.png, *.jpg, *.bmp)|*.png;*.jpg;*.bmp";
-			openFile.RestoreDirectory = true;
+			var openFile = new OpenFileDialog() {
+				Filter = "Supported Image File (*.png, *.jpg, *.bmp)|*.png;*.jpg;*.bmp",
+				RestoreDirectory = true
+			};
 			if (openFile.ShowDialog(this) == true) {
 				m_backgroundImage = openFile.FileName;
 				LoadBackgroundImage();
@@ -124,14 +142,27 @@ namespace Xbox2Android
 			if (m_axisControl == null) {
 				AddAxisControlToCanvas();
 			}
-
 			m_axisControl.Location = m_mouseRightClickPoint;
+		}
+
+		private void SetDirection_Click(object sender, RoutedEventArgs e)
+		{
+			if (m_dirControl == null) {
+				AddDirectionControlToCanvas();
+			}
+			m_dirControl.Location = m_mouseRightClickPoint;
 		}
 
 		private void AxisControl_RemoveClicked(object sender, EventArgs e)
 		{
 			canvasMain.Children.Remove(m_axisControl);
 			m_axisControl = null;
+		}
+
+		private void DirectionControl_RemoveClicked(object sender, EventArgs e)
+		{
+			canvasMain.Children.Remove(m_dirControl);
+			m_dirControl = null;
 		}
 
 		private void ClearAll_Click(object sender, RoutedEventArgs e)
@@ -156,6 +187,10 @@ namespace Xbox2Android
 				else {
 					Profile.ShadowAxisOffset = null;
 				}
+			}
+			if (m_dirControl != null) {
+				Profile.DirectionCenter = m_dirControl.Location;
+				Profile.DirectionSpeed = m_dirControl.DirectionSpeed;
 			}
 			for (int index = 0; index < Constants.ButtonCount; ++index) {
 				Profile.ButtonPositions[index].Clear();
@@ -207,6 +242,9 @@ namespace Xbox2Android
 				if (!selectedControl.IsSelected) {
 					if (m_axisControl != null) {
 						m_axisControl.IsSelected = false;
+					}
+					if (m_dirControl != null) {
+						m_dirControl.IsSelected = false;
 					}
 					foreach (var control in m_buttonControls.SelectMany(items => items)) {
 						control.IsSelected = false;

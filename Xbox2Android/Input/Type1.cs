@@ -22,6 +22,7 @@ namespace Xbox2Android.Input
 
 		bool m_isPreviousTouchDown;
 		Point? m_axisPosition;
+		Point? m_dirPosition;
 		bool[] m_isButtonDown = new bool[Constants.ButtonCount];
 		bool m_isDataDirty;
 		readonly List<Point> m_dataBuffer = new List<Point>(10);
@@ -73,6 +74,30 @@ namespace Xbox2Android.Input
 			}
 		}
 
+		public void DirectionDown(Point point, Property prop)
+		{
+			if (!m_dirPosition.HasValue) {
+				m_dirPosition = point;
+				m_isDataDirty = true;
+			}
+		}
+
+		public void DirectionUpdate(Point point, Property prop)
+		{
+			if (m_dirPosition == null || m_dirPosition.Value != point) {
+				m_dirPosition = point;
+				m_isDataDirty = true;
+			}
+		}
+
+		public void DirectionUp(Property prop)
+		{
+			if (m_dirPosition != null) {
+				m_dirPosition = null;
+				m_isDataDirty = true;
+			}
+		}
+
 		public void ButtonDown(int index, Property prop)
 		{
 			if (!m_isButtonDown[index]) {
@@ -95,6 +120,9 @@ namespace Xbox2Android.Input
 				m_dataBuffer.Clear();
 				if (m_axisPosition.HasValue) {
 					m_dataBuffer.Add(m_axisPosition.Value);
+				}
+				if (m_dirPosition.HasValue) {
+					m_dataBuffer.Add(m_dirPosition.Value);
 				}
 				for (int cnt = 0; cnt < Constants.ButtonCount; ++cnt) {
 					if (m_isButtonDown[cnt]) {

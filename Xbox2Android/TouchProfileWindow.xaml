@@ -15,6 +15,7 @@
 				<MenuItem Header="Set Background Image" Click="SetBackgroundImage_Click" />
 				<Separator />
 				<MenuItem Header="Set Axis" Click="SetAxis_Click" />
+				<MenuItem Header="Set Direction" Click="SetDirection_Click" />
 				<MenuItem Header="Add Button">
 					<MenuItem Header="A" Click="SetControllerButton_Click" />
 					<MenuItem Header="B" Click="SetControllerButton_Click" />
