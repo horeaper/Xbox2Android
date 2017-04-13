@@ -200,7 +200,7 @@ namespace Xbox2Android
 						direction.Normalize();
 						direction *= (profile.DirectionSpeed * interval);
 						m_currentDirectionPoint.X += direction.X;
-						m_currentDirectionPoint.Y -= direction.Y;
+						m_currentDirectionPoint.Y += direction.Y;
 						InputMapper.DirectionUpdate(m_currentDirectionPoint);
 					}
 				}
